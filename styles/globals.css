@@ -1,0 +1,54 @@
+@import './tailwind.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom global styles can go here */
+body {
+  @apply bg-gray-900 text-white;
+  font-family: 'Inter', sans-serif;
+}
+
+.container {
+  @apply mx-auto px-4;
+}
+
+a {
+  @apply text-white hover:text-green-500 transition-colors;
+}
+
+input {
+  @apply bg-gray-700 text-white p-2 rounded;
+}
+
+button {
+  @apply bg-green-500 p-2 rounded text-white hover:bg-green-600 transition-colors;
+}
+
+header, footer {
+  @apply bg-gray-800 text-white p-4;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-bold;
+}
+
+ul {
+  @apply list-none;
+}
+
+.navbar {
+  @apply flex space-x-4;
+}
+
+.main {
+  @apply py-8;
+}
+
+.card {
+  @apply bg-gray-900 p-4 rounded-lg shadow-md;
+}
+
+.flex-center {
+  @apply flex justify-center items-center;
+}
