@@ -17,7 +17,7 @@ const Markets: React.FC = () => {
   useEffect(() => {
     const fetchMarkets = async () => {
       try {
-        const response = await fetch('/api/market'); 
+        const response = await fetch('/api/markets');
 
         if (!response.ok) {
           throw new Error('Failed to fetch market data');
@@ -31,7 +31,7 @@ const Markets: React.FC = () => {
         setLoading(false);
       }
     };
-    
+
     fetchMarkets();
   }, []);
 

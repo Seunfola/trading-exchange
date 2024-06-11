@@ -1,19 +1,10 @@
+// CandlestickChart component
 import React, { useEffect, useState } from 'react';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  TimeScale,
-  Title,
-  Tooltip,
-  Legend,
-  registerables,
-  ChartOptions as ChartJSOptions,
-} from 'chart.js';
+import { Chart as ChartJS, ChartOptions as ChartJSOptions, registerables } from 'chart.js';
 import { Chart } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns';
 
-// Dynamically import the chartjs-chart-financial module
+
 const loadFinancialChartModules = async () => {
   const { OhlcElement, OhlcController, CandlestickElement, CandlestickController } = await import('chartjs-chart-financial');
   ChartJS.register(
@@ -22,9 +13,8 @@ const loadFinancialChartModules = async () => {
     CandlestickElement,
     CandlestickController
   );
+  ChartJS.register(...registerables);
 };
-
-ChartJS.register(...registerables);
 
 interface ChartData {
   date: string;
@@ -51,8 +41,8 @@ const CandlestickChart: React.FC = () => {
         setLoading(false);
       }
     };
+    loadFinancialChartModules(); 
     fetchData();
-    loadFinancialChartModules(); // Load the financial chart modules
   }, []);
 
   const processedData = {

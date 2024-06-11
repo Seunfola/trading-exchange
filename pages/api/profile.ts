@@ -1,11 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from '../lib/prisma';
-import { parseUserId } from '../lib/utils';
+import prisma from '../../lib/prisma';
+import getUserIdFromRequest from '../../lib/getUserIdFormRequest';
+
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     try {
-      const userId = parseUserId(req.query.userId);
+      const userId = getUserIdFromRequest(req);
       if (userId === null) {
         return res.status(400).json({ message: 'Invalid userId parameter' });
       }
@@ -39,7 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(404).json({ message: 'Profile not found' });
       }
     } catch (error) {
-      res.status(500).json({ message: 'Error fetching profile data', error});
+      res.status(500).json({ message: 'Error fetching profile data', error });
     }
   } else {
     res.status(405).json({ message: 'Method not allowed' });

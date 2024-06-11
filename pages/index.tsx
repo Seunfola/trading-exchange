@@ -15,34 +15,12 @@ const Home: React.FC = () => {
   return (
     <div className="bg-gray-900 min-h-screen flex flex-col">
       <Header />
-      <main className="container mx-auto py-8 flex-grow">
+      <main className="container mx-auto py-2 flex-grow">
         {!isAuthenticated ? (
           <div className="flex flex-col items-center">
-            <h1 className="text-3xl text-white mb-4">Please {showLogin ? 'Login' : 'Signup'}</h1>
+            
             {showLogin ? <Login /> : <Signup />}
-            <p className="text-white mt-4">
-              {showLogin ? (
-                <>
-                  Don't have an account?{' '}
-                  <button
-                    className="text-blue-500 underline"
-                    onClick={() => setShowLogin(false)}
-                  >
-                    Sign up
-                  </button>
-                </>
-              ) : (
-                <>
-                  Already have an account?{' '}
-                  <button
-                    className="text-blue-500 underline"
-                    onClick={() => setShowLogin(true)}
-                  >
-                    Login
-                  </button>
-                </>
-              )}
-            </p>
+            
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

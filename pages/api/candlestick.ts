@@ -14,7 +14,6 @@ interface CandlestickData {
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     try {
-   
       const candlestickData: CandlestickData[] = await prisma.tradingPair.findMany({
         select: {
           date: true,
@@ -25,9 +24,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
-     
       const data = candlestickData.map((entry: CandlestickData) => ({
-        date: entry.date.toISOString(),
+        date: entry.date.toISOString(), // Convert to ISO string
         open: entry.open,
         high: entry.high,
         low: entry.low,

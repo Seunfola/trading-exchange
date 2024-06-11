@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import '@fortawesome/fontawesome-free/css/all.css';
 
 const Header: React.FC = () => {
   return (
@@ -35,9 +36,10 @@ const Header: React.FC = () => {
             </li>
           </ul>
         </nav>
-        <div className="search-bar">
-          <input type="text" placeholder="Search..." className="bg-gray-700 text-white p-2 rounded"/>
-        </div>
+        <div className="search-bar relative">
+      <input type="text" placeholder="Search..." className="bg-gray-700 text-white p-2 pl-8 rounded"/>
+      <i className="fas fa-search absolute inset-y-0 left-0 flex items-center pl-2 pt-3"></i>
+    </div>
       </div>
     </div>
   </header>

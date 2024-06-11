@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.5.2",
     "@prisma/client": "^5.15.0",
     "@types/md5": "^2.3.5",
     "@types/nodemailer": "^6.4.15",
@@ -20,7 +21,9 @@
     "date-fns": "^3.6.0",
     "md5": "^2.3.0",
     "next": "14.2.3",
+    "next-iron-session": "^4.2.0",
     "nodemailer": "^6.9.13",
+    "prisma": "^5.15.0",
     "react": "^18",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18"
@@ -35,7 +38,6 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "postcss": "^8.4.38",
-    "prisma": "^5.15.0",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.4.5"
   }

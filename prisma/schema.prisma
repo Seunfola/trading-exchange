@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "cockroachdb"
   url      = env("DATABASE_URL")
 }
 
@@ -7,8 +7,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Widget {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+}
+
 model TradingPair {
-  id    Int      @id @default(autoincrement())
+  id    Int      @id @default(sequence())
   date  DateTime
   open  Float
   high  Float
@@ -17,23 +21,24 @@ model TradingPair {
 }
 
 model Market {
-  id     Int     @id @default(autoincrement())
+  id     Int     @id @default(sequence())
   name   String
   price  Float
   change Float
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
+  id       Int     @id @default(sequence())
   username String  @unique
   email    String  @unique
   password String
   Wallet   Wallet[]
   OrderBook OrderBook[]
+  createdAt DateTime @default(now())
 }
 
 model OrderBook {
-  id          Int     @id @default(autoincrement())
+  id          Int     @id @default(sequence())
   symbol      String
   bidPrice    Float
   askPrice    Float
@@ -41,12 +46,14 @@ model OrderBook {
   askQuantity Float
   userId      Int
   user        User @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
 }
 
 model Wallet {
-  id       Int     @id @default(autoincrement())
+  id       Int     @id @default(sequence())
   currency String
   balance  Float
   userId   Int
   user     User @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
 }
