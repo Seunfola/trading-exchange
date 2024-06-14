@@ -1,10 +1,8 @@
 import { NextApiRequest } from 'next';
+import { parseUserId } from './utils';
 
 const getUserIdFromRequest = (req: NextApiRequest): number | null => {
-  
-  const userId = req.body.userId;
-
-  return typeof userId === 'number' ? userId : null;
+  return parseUserId(req.body.userId);
 };
 
 export default getUserIdFromRequest;

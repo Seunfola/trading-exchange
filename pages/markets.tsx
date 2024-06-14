@@ -3,10 +3,9 @@ import Footer from '../components/Footer';
 import { useEffect, useState } from 'react';
 
 interface MarketData {
-  id: number;
-  name: string;
-  price: number;
-  change: number;
+  symbol: string;
+  price: string;
+  priceChange: string;
 }
 
 const Markets: React.FC = () => {
@@ -17,7 +16,7 @@ const Markets: React.FC = () => {
   useEffect(() => {
     const fetchMarkets = async () => {
       try {
-        const response = await fetch('/api/markets');
+        const response = await fetch('/api/market'); // Updated endpoint to match the real-time API
 
         if (!response.ok) {
           throw new Error('Failed to fetch market data');
@@ -50,10 +49,13 @@ const Markets: React.FC = () => {
         <h1 className="text-3xl text-white mb-4">Markets</h1>
         <div className="bg-gray-800 p-4 rounded-lg shadow-md">
           {markets.map((market) => (
-            <div key={market.id} className="flex justify-between mb-2">
-              <span className="text-white">{market.name}</span>
-              <span className={`text-${market.change > 0 ? 'green' : 'red'}-500`}>
-                {market.price.toFixed(2)}
+            <div key={market.symbol} className="flex justify-between mb-2">
+              <span className="text-white">{market.symbol}</span>
+              <span className={`text-${parseFloat(market.priceChange) > 0 ? 'green' : 'red'}-500`}>
+                {parseFloat(market.price).toFixed(2)}
+              </span>
+              <span className={`text-${parseFloat(market.priceChange) > 0 ? 'green' : 'red'}-500`}>
+                {market.priceChange}%
               </span>
             </div>
           ))}

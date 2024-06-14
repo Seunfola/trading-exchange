@@ -1,17 +1,17 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from '../../lib/prisma';
+import axios from 'axios';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     try {
-      const marketData = await prisma.market.findMany({
-        select: {
-          id: true,
-          name: true,
-          price: true,
-          change: true,
-        },
-      });
+    
+      const response = await axios.get('https://api.binance.com/api/v3/ticker/24hr');
+
+      const marketData = response.data.map((item: any) => ({
+        symbol: item.symbol,
+        price: item.lastPrice,
+        priceChange: item.priceChangePercent,
+      }));
 
       res.status(200).json(marketData);
     } catch (error) {
