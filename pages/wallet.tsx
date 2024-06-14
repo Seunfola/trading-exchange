@@ -21,7 +21,7 @@ const WalletPage: React.FC = () => {
           throw new Error('Failed to fetch wallets');
         }
         const data = await response.json();
-        setWallets(data);
+        setWallets([data]);
       } catch (error) {
         setError((error as Error).message);
       } finally {
