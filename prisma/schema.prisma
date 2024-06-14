@@ -50,10 +50,14 @@ model OrderBook {
 }
 
 model Wallet {
-  id       Int     @id @default(sequence())
-  currency String
-  balance  Float
-  userId   Int
-  user     User @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+  id            Int       @id @default(sequence())
+  currency      String
+  balance       Float
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id])
+  externalId    String?  
+  externalBalance Float?   
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
+
