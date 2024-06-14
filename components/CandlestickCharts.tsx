@@ -1,22 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Chart as ChartJS, CategoryScale, LinearScale, TimeScale, Title, Tooltip, Legend,  } from 'chart.js';
+import { CircleDashed } from 'lucide-react';
+import { Chart as ChartJS, registerables } from 'chart.js'; // Import ChartJS and its registerables
+import { Chart } from 'react-chartjs-2';
+import 'chartjs-adapter-date-fns';
 import {
   CandlestickController,
   CandlestickElement,
 } from "chartjs-chart-financial";
-import { Chart } from 'react-chartjs-2';
-import 'chartjs-adapter-date-fns';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  TimeScale,
-  Title,
-  Tooltip,
-  Legend,
-  CandlestickController,
-  CandlestickElement
-);
+ChartJS.register(...registerables); // Register all Chart.js modules
 
 interface CandlestickData {
   openTime: number;
@@ -25,7 +17,6 @@ interface CandlestickData {
   low: string;
   close: string;
   closeTime: number;
-  options: any;
 }
 
 const CandlestickChart: React.FC<{ symbol: string; interval: string }> = ({ symbol, interval }) => {
@@ -40,6 +31,7 @@ const CandlestickChart: React.FC<{ symbol: string; interval: string }> = ({ symb
         if (!response.ok) {
           throw new Error('Failed to fetch candlestick data');
         }
+
         const data: CandlestickData[] = await response.json();
         setData(data);
       } catch (error) {
@@ -48,12 +40,16 @@ const CandlestickChart: React.FC<{ symbol: string; interval: string }> = ({ symb
         setLoading(false);
       }
     };
-
     fetchCandlestickData();
   }, [symbol, interval]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-full bg-gray-900 text-white">
+        <CircleDashed className="w-8 h-8 mr-2 animate-spin"/>
+        <span>Loading...</span>
+      </div>
+    );
   }
 
   if (error) {
@@ -65,7 +61,7 @@ const CandlestickChart: React.FC<{ symbol: string; interval: string }> = ({ symb
       {
         label: `${symbol} Candlestick`,
         data: data.map((item) => ({
-          x: item.openTime,
+          t: new Date(item.openTime),
           o: parseFloat(item.open),
           h: parseFloat(item.high),
           l: parseFloat(item.low),
@@ -78,12 +74,25 @@ const CandlestickChart: React.FC<{ symbol: string; interval: string }> = ({ symb
   };
 
   const options = {
-    responsive: true,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Candlestick Chart',
+      },
+      tooltip: {
+        enabled: true,
+        mode: 'point',
+        intersect: false,
+      },
+    },
     scales: {
       x: {
         type: 'time',
         time: {
           unit: 'minute',
+        },
+        ticks: {
+          source: 'data',
         },
       },
       y: {

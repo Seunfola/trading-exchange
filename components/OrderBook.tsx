@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
+import { CircleDashed } from 'lucide-react';
 interface Order {
   id: number;
   price: number;
@@ -32,7 +32,11 @@ const OrderBook: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <div className="text-white">Loading...</div>;
+    return 
+    <div className="text-white">
+       <CircleDashed />
+      Loading...
+      </div>;
   }
 
   if (error) {
@@ -42,16 +46,26 @@ const OrderBook: React.FC = () => {
   return (
     <div className="bg-gray-900 p-4 rounded-lg shadow-md">
       <h2 className="text-white mb-4">Order Book</h2>
-      <ul className="text-white space-y-2">
-        {orders.map((order) => (
-          <li key={order.id} className="flex justify-between">
-            <span>{order.price}</span>
-            <span>{order.amount}</span>
-            <span>{order.total}</span>
-            <span>{order.orderType}</span>
-          </li>
-        ))}
-      </ul>
+      <table className="w-full">
+        <thead>
+          <tr>
+            <th className="text-left">Price</th>
+            <th className="text-left">Amount</th>
+            <th className="text-left">Total</th>
+            <th className="text-left">Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          {orders.map((order) => (
+            <tr key={order.id}>
+              <td>{order.price}</td>
+              <td>{order.amount}</td>
+              <td>{order.total}</td>
+              <td>{order.orderType}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

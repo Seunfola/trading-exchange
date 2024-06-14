@@ -16,8 +16,8 @@ const OrderForm: React.FC = () => {
       try {
         const response = await axios.get('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
         const price = parseFloat(response.data.price);
-        setBuyPrice(price);
-        setSellPrice(price);
+        setBuyPrice(1 / price); // Calculate the equivalent value of $1 in BTC
+        setSellPrice(1 / price); // Calculate the equivalent value of $1 in BTC
       } catch (error) {
         console.error('Error fetching prices:', error);
       }
@@ -40,7 +40,7 @@ const OrderForm: React.FC = () => {
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newQuantityInUSD = parseFloat(e.target.value);
     setQuantityInUSD(isNaN(newQuantityInUSD) ? 0 : newQuantityInUSD);
-    setTotal(mode === 'buy' ? buyPrice * newQuantityInUSD : sellPrice * newQuantityInUSD);
+    setTotal(mode === 'buy' ? newQuantityInUSD * buyPrice : newQuantityInUSD * sellPrice);
   };
 
   const handleBuy = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -86,11 +86,11 @@ const OrderForm: React.FC = () => {
       {mode === 'buy' ? (
         <form onSubmit={handleBuy}>
           <div className="mb-4">
-            <label htmlFor="buyPrice" className="block mb-2">Buy Price (from Binance)</label>
+            <label htmlFor="buyPrice" className="block mb-2">Buy Price (1 BTC)</label>
             <input
               type="number"
               id="buyPrice"
-              value={buyPrice}
+              value={buyPrice.toFixed(8)} // Display BTC price with 8 decimal places
               readOnly
               className="w-full bg-gray-700 p-2 rounded"
             />
@@ -122,11 +122,11 @@ const OrderForm: React.FC = () => {
       ) : (
         <form onSubmit={handleSell}>
           <div className="mb-4">
-            <label htmlFor="sellPrice" className="block mb-2">Sell Price (from Binance)</label>
+            <label htmlFor="sellPrice" className="block mb-2">Sell Price (1 BTC)</label>
             <input
               type="number"
               id="sellPrice"
-              value={sellPrice}
+              value={sellPrice.toFixed(8)} // Display BTC price with 8 decimal places
               readOnly
               className="w-full bg-gray-700 p-2 rounded"
             />
