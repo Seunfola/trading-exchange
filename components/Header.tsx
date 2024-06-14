@@ -29,11 +29,6 @@ const Header: React.FC = () => {
                 <a className="hover:text-green-500">Wallet</a>
               </Link>
             </li>
-            <li>
-              <Link href="/profile" legacyBehavior>
-                <a className="hover:text-green-500">Profile</a>
-              </Link>
-            </li>
           </ul>
         </nav>
         <div className="search-bar relative">

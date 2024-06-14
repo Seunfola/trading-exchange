@@ -17,7 +17,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     try {
-      // Check if the user already exists
+   
       const existingUser = await prisma.user.findUnique({
         where: { email },
       });
@@ -26,7 +26,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(400).json({ message: 'User already exists' });
       }
 
-      // Create the new user
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = await prisma.user.create({
         data: {
@@ -43,7 +42,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   } else if (req.method === 'GET') {
     try {
-      // Fetch all users
+    
       const users = await prisma.user.findMany({
         select: {
           id: true,
@@ -53,7 +52,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
-      // Format user data
+    
       const formattedUsers = users.map(user => ({
         ...user,
         createdAt: user.createdAt.toISOString(),
@@ -65,7 +64,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(500).json({ message: 'Error fetching users', error: (error as Error).message });
     }
   } else {
-    // Handle invalid HTTP methods
+  
     res.setHeader('Allow', ['POST', 'GET']);
     res.status(405).json({ message: `Method ${req.method} not allowed` });
   }

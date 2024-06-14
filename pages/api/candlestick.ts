@@ -15,8 +15,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const { symbol = 'BTCUSDT', interval = '1m', limit = 100 } = req.query;
 
+      // Ensure symbol and interval are valid
+      if (typeof symbol !== 'string' || typeof interval !== 'string' || typeof limit !== 'string') {
+        return res.status(400).json({ message: 'Invalid query parameters' });
+      }
+
       // Fetch candlestick data from Binance API
-      const response = await axios.get(`https://api.binance.com/api/v3/klines`, {
+      const response = await axios.get('https://api.binance.com/api/v3/klines', {
         params: {
           symbol,
           interval,
@@ -24,7 +29,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
-      const candlestickData = response.data.map((entry: any) => ({
+      const candlestickData: CandlestickData[] = response.data.map((entry: any) => ({
         openTime: entry[0],
         open: entry[1],
         high: entry[2],

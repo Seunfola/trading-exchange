@@ -39,8 +39,13 @@ const OrderForm: React.FC = () => {
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newQuantityInUSD = parseFloat(e.target.value);
-    setQuantityInUSD(isNaN(newQuantityInUSD) ? 0 : newQuantityInUSD);
-    setTotal(mode === 'buy' ? newQuantityInUSD * buyPrice : newQuantityInUSD * sellPrice);
+    if (isNaN(newQuantityInUSD)) {
+      setQuantityInUSD(0);
+      setTotal(0);
+    } else {
+      setQuantityInUSD(newQuantityInUSD);
+      setTotal(mode === 'buy' ? newQuantityInUSD * buyPrice : newQuantityInUSD * sellPrice);
+    }
   };
 
   const handleBuy = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -112,7 +117,7 @@ const OrderForm: React.FC = () => {
             <input
               type="number"
               id="total"
-              value={total}
+              value={total.toFixed(8)} // Display total with 8 decimal places
               readOnly
               className="w-full bg-gray-700 p-2 rounded"
             />
@@ -148,7 +153,7 @@ const OrderForm: React.FC = () => {
             <input
               type="number"
               id="total"
-              value={total}
+              value={total.toFixed(8)} // Display total with 8 decimal places
               readOnly
               className="w-full bg-gray-700 p-2 rounded"
             />
