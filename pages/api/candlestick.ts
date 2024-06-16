@@ -13,14 +13,16 @@ interface CandlestickData {
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     try {
-      const { symbol = 'BTCUSDT', interval = '1m', limit = 100 } = req.query;
+      const { symbol, interval, limit = 100 } = req.query;
 
-      // Ensure symbol and interval are valid
-      if (typeof symbol !== 'string' || typeof interval !== 'string' || typeof limit !== 'string') {
-        return res.status(400).json({ message: 'Invalid query parameters' });
+      if (!symbol || typeof symbol !== 'string') {
+        return res.status(400).json({ message: 'Invalid or missing "symbol" query parameter' });
       }
 
-      // Fetch candlestick data from Binance API
+      if (!interval || typeof interval !== 'string') {
+        return res.status(400).json({ message: 'Invalid or missing "interval" query parameter' });
+      }
+
       const response = await axios.get('https://api.binance.com/api/v3/klines', {
         params: {
           symbol,

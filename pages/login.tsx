@@ -81,7 +81,7 @@ const Login: React.FC = () => {
         </div>
         <button type="submit" className="w-full bg-green-500 p-3 rounded text-white font-bold hover:bg-green-600 transition">Login</button>
         <p className="text-white mt-4 text-center">
-          Don't have an account?{' '}
+          Don&rsquo;t have an account?{' '}
           <Link href="/signup" legacyBehavior>
             <a className="text-blue-400 hover:underline transition">Sign up</a>
           </Link>

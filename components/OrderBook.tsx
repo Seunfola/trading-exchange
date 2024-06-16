@@ -14,16 +14,18 @@ const OrderBook: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'buy' | 'sell'>('all');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(10);
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await fetch('https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=10');
+        const response = await fetch('https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=100');
         if (!response.ok) {
           throw new Error('Failed to fetch order book data');
         }
         const data = await response.json();
-        
+
         const formattedOrders: Order[] = [
           ...data.bids.map((order: [string, string], index: number) => ({
             id: index,
@@ -55,6 +57,23 @@ const OrderBook: React.FC = () => {
     if (filter === 'all') return true;
     return order.orderType === filter;
   });
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredOrders.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+
+  const handlePaginationNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePaginationPrev = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   if (loading) {
     return (
@@ -106,7 +125,7 @@ const OrderBook: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredOrders.map((order) => (
+            {currentItems.map((order) => (
               <tr key={order.id} className="hover:bg-gray-800">
                 <td className="px-4 py-2 border-b border-gray-700 text-white">{order.price.toFixed(2)}</td>
                 <td className="px-4 py-2 border-b border-gray-700 text-white">{order.amount.toFixed(6)}</td>
@@ -116,6 +135,24 @@ const OrderBook: React.FC = () => {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Pagination controls */}
+      <div className="flex justify-between mt-4">
+        <button
+          className={`px-4 py-2 bg-gray-800 text-white rounded ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+          onClick={handlePaginationPrev}
+          disabled={currentPage === 1}
+        >
+          Prev
+        </button>
+        <button
+          className={`px-4 py-2 bg-gray-800 text-white rounded ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
+          onClick={handlePaginationNext}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
       </div>
     </div>
   );
