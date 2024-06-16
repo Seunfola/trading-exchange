@@ -8,13 +8,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     const { symbol, userId } = req.body;
 
-    // Validate input
     if (typeof symbol !== 'string' || typeof userId !== 'number' || userId <= 0) {
       return res.status(400).json({ message: 'Invalid input' });
     }
 
     try {
-      // Fetch bid and ask prices and quantities from the Binance API
+      
       const response = await axios.get(`https://api.binance.com/api/v3/depth?symbol=${symbol}`);
       const { bids, asks } = response.data;
 
@@ -22,11 +21,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         throw new Error('Failed to fetch bid and ask data from Binance API');
       }
 
-      // Parse bid and ask data
+     
       const bid = bids[0];
       const ask = asks[0];
 
-      // Create new order
       const newOrder = await prisma.orderBook.create({
         data: {
           symbol,

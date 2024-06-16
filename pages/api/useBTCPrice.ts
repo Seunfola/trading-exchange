@@ -13,6 +13,7 @@ interface RealTimeData {
 }
 
 export interface HistoricalDataItem {
+  symbol: string;
   date: string;
   price: string;
   highPrice: string;
@@ -71,7 +72,7 @@ export const useCurrencyPairsPrices = (symbols: string[]): MarketData[] => {
             const realTimeData = await fetchRealTimeData(symbol);
             const historicalData = await fetchHistoricalData(symbol);
             return {
-              symbol, // Ensure to include the symbol property here
+              symbol, 
               realTimeData,
               historicalData,
               isLoading: false,
@@ -80,7 +81,7 @@ export const useCurrencyPairsPrices = (symbols: string[]): MarketData[] => {
           } catch (error) {
             console.error(`Error fetching data for ${symbol}:`, error);
             return {
-              symbol, // Ensure to include the symbol property here even in error case
+              symbol,
               realTimeData: null,
               historicalData: [],
               isLoading: false,

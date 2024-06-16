@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 const BASE_URL = 'https://api.binance.com';
 
 export interface HistoricalDataItem {
-    symbol: string;
+  symbol: string;
   date: string;
   price: string;
   highPrice: string;
