@@ -1,151 +1,98 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
+import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { RainbowKitProvider, ConnectButton } from '@rainbow-me/rainbowkit';
+import { chains, wagmiClient, queryClient } from './api/provider';
+import { WagmiConfig } from 'wagmi';
+import { QueryClientProvider } from '@tanstack/react-query';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-interface Wallet {
-  id: string;
-  currency: string;
-  balance: number;
-  externalBalance?: number;
-}
-
 const WalletPage: React.FC = () => {
-  const [wallets, setWallets] = useState<Wallet[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [action, setAction] = useState<'new' | 'existing'>('new'); // Default to new
-  const [currency, setCurrency] = useState<string>('BTC'); // Default to BTC
-  const [address, setAddress] = useState<string>(''); // Address input for linking existing wallet
+  const { address, isConnected } = useAccount();
+  const { connect, connectors, error, isLoading, pendingConnector } = useConnect();
+  const { disconnect } = useDisconnect();
+  const [balance, setBalance] = useState<string | null>(null);
+  const [errorState, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchWallets = async () => {
-      try {
-        const response = await fetch('/api/wallet');
-        if (!response.ok) {
-          throw new Error('Failed to fetch wallets');
+    const fetchBalance = async () => {
+      if (address) {
+        try {
+          const response = await fetch(`/api/balance?address=${address}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch balance');
+          }
+          const data = await response.json();
+          setBalance(data.balance);
+        } catch (error) {
+          setError((error as Error).message);
         }
-        const data = await response.json();
-        setWallets(data);
-      } catch (error) {
-        setError((error as Error).message);
-      } finally {
-        setLoading(false);
       }
     };
 
-    fetchWallets();
-  }, []);
+    fetchBalance();
+  }, [address]);
 
-  const createWallet = async () => {
-    try {
-      const response = await fetch('/api/wallet/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ currency }),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to create wallet');
-      }
-      const newWallet = await response.json();
-      setWallets([newWallet, ...wallets]);
-    } catch (error) {
-      setError((error as Error).message);
-    }
+  const handleConnect = (connector: any) => {
+    connect({ connector });
   };
-
-  const linkExistingWallet = async () => {
-    try {
-      const response = await fetch('/api/wallet/link', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ currency, address }),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to link wallet');
-      }
-      const newWallet = await response.json();
-      setWallets([newWallet, ...wallets]);
-    } catch (error) {
-      setError((error as Error).message);
-    }
-  };
-
-  if (loading) {
-    return <div className="text-white">Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="text-red-500">{error}</div>;
-  }
 
   return (
-    <div className="bg-gray-900 min-h-screen flex flex-col">
-      <Header />
-      <main className="container mx-auto py-8 flex-grow">
-        <h1 className="text-3xl text-white mb-4">Wallet</h1>
-        <div>
-          <button onClick={() => setAction('new')} className="bg-green-500 text-white px-4 py-2 rounded mb-4">
-            Create New Wallet
-          </button>
-          <button onClick={() => setAction('existing')} className="bg-blue-500 text-white px-4 py-2 rounded mb-4">
-            Link Existing Wallet
-          </button>
-        </div>
-        <div>
-          <label htmlFor="currency" className="block mb-2 text-white">Select Currency</label>
-          <select
-            id="currency"
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
-            className="w-full bg-gray-700 p-2 rounded mb-4"
-          >
-            <option value="BTC">BTC</option>
-            <option value="ETH">ETH</option>
-            {/* Add other currencies as needed */}
-          </select>
-          {action === 'new' ? (
-            <button onClick={createWallet} className="bg-green-500 text-white px-4 py-2 rounded">
-              Create Wallet
-            </button>
-          ) : (
-            <div>
-              <label htmlFor="address" className="block mb-2 text-white">Wallet Address</label>
-              <input
-                type="text"
-                id="address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                className="w-full bg-gray-700 p-2 rounded mb-4"
-                placeholder="Enter your wallet address"
-              />
-              <button onClick={linkExistingWallet} className="bg-blue-500 text-white px-4 py-2 rounded">
-                Link Wallet
-              </button>
-            </div>
-          )}
-        </div>
-        <div className="bg-gray-800 p-4 rounded-lg shadow-md mt-4">
-          {wallets.length === 0 ? (
-            <div className="text-white">No wallets found.</div>
-          ) : (
-            wallets.map((wallet) => (
-              <div key={wallet.id} className="flex justify-between mb-2">
-                <span className="text-white">{wallet.currency}</span>
-                <span className="text-white">Balance: {wallet.balance}</span>
-                {wallet.externalBalance !== undefined && (
-                  <span className="text-white">External Balance: {wallet.externalBalance}</span>
+    <WagmiConfig client={wagmiClient}>
+      <RainbowKitProvider chains={chains}>
+        <QueryClientProvider client={queryClient}>
+          <div className="bg-gray-900 min-h-screen flex flex-col">
+            <Header />
+            <main className="container mx-auto py-8 flex-grow">
+              <h1 className="text-3xl text-white mb-4">Wallet</h1>
+              <div>
+                <ConnectButton />
+                {isConnected && (
+                  <button
+                    onClick={() => disconnect()}
+                    className="bg-red-500 text-white px-4 py-2 rounded mb-4"
+                  >
+                    Disconnect
+                  </button>
+                )}
+                {!isConnected && (
+                  <div>
+                    {connectors.map((connector) => (
+                      <button
+                        key={connector.id}
+                        onClick={() => handleConnect(connector)}
+                        disabled={!connector.ready || isLoading && pendingConnector?.id === connector.id}
+                        className="bg-blue-500 text-white px-4 py-2 rounded mb-4 mr-2"
+                      >
+                        {connector.name}
+                        {!connector.ready && ' (unsupported)'}
+                        {isLoading && pendingConnector?.id === connector.id && ' (connecting)'}
+                      </button>
+                    ))}
+                    {error && <div className="text-red-500">{error.message}</div>}
+                  </div>
                 )}
               </div>
-            ))
-          )}
-        </div>
-      </main>
-      <Footer />
-    </div>
+              {isConnected && (
+                <div className="bg-gray-800 p-4 rounded-lg shadow-md mt-4">
+                  <h2 className="text-2xl text-white mb-2">Wallet Information</h2>
+                  <div className="text-white mb-2">Address: {address}</div>
+                  {balance !== null ? (
+                    <div className="text-white">Balance: {balance}</div>
+                  ) : (
+                    <div className="text-white">Loading balance...</div>
+                  )}
+                  {errorState && <div className="text-red-500">{errorState}</div>}
+                </div>
+              )}
+            </main>
+            <Footer />
+          </div>
+        </QueryClientProvider>
+      </RainbowKitProvider>
+    </WagmiConfig>
   );
 };
 
