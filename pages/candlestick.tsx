@@ -17,10 +17,10 @@ const CandlestickChart = () => {
 
   const options: ApexCharts.ApexOptions = {
     chart: {
-      height: 350,
-      type: 'candlestick', // Ensure this type matches 'candlestick'
+      height: 450,
+      type: 'candlestick', 
       toolbar: {
-        show: false,
+        show: true,
       },
     },
     title: {
@@ -114,7 +114,7 @@ const CandlestickChart = () => {
       </div>
 
       <div>
-        <ReactApexChart options={options} series={series} type="candlestick" height={350} />
+        <ReactApexChart options={options} series={series} type="candlestick" height={450} />
       </div>
     </div>
   );
