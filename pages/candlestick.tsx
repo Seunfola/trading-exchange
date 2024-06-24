@@ -71,16 +71,22 @@ const CandlestickChart = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="flex items-center space-x-4 mb-4">
+      <div className="flex items-center">
+  <label htmlFor="symbol" className="mr-2 font-semibold">Select Pair:</label>
+  <select
+    id="symbol"
+    value={symbol}
+    onChange={handleSymbolChange}
+    className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500 bg-transparent"
+  >
+    <option value="BTCUSDT">BTC/USDT</option>
+    <option value="BTCETH">BTC/ETH</option>
+    <option value="ETHUSDT">ETH/USDT</option>
+  </select>
+</div>
+
         <div className="flex items-center">
-          <label htmlFor="symbol" className="mr-2 font-semibold">Select Pair:</label>
-          <select id="symbol" value={symbol} onChange={handleSymbolChange} className="px-2 py-1 border border-sky-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500">
-            <option value="BTCUSDT">BTC/USDT</option>
-            <option value="BTCETH">BTC/ETH</option>
-            <option value="ETHUSDT">ETH/USDT</option>
-          </select>
-        </div>
-        <div className="flex items-center">
-          <label className="mr-2 font-semibold">Select Start Date:</label>
+          <label className="mr-2 font-semibold">Start Date:</label>
           <DatePicker
             selected={startDate}
             onChange={(date) => setStartDate(date as Date)}
@@ -92,7 +98,7 @@ const CandlestickChart = () => {
           />
         </div>
         <div className="flex items-center">
-          <label className="mr-2 font-semibold">Select End Date:</label>
+          <label className="mr-2 font-semibold">End Date:</label>
           <DatePicker
             selected={endDate}
             onChange={(date) => setEndDate(date as Date)}
@@ -104,7 +110,7 @@ const CandlestickChart = () => {
             className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
           />
         </div>
-        <button onClick={handleDateChange} className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-500">Update Chart</button>
+        <button onClick={handleDateChange} className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-500">Update </button>
       </div>
 
       <div>
