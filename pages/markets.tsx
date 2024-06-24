@@ -112,7 +112,7 @@ const Markets: React.FC = () => {
           </div>
         </div>
 
-        {/* Currency pair filter */}
+        
         <div className="mt-4">
           <h2 className="text-xl text-white mb-2">Currency Pair Filter</h2>
           <div className="flex items-center mb-4">
@@ -129,8 +129,6 @@ const Markets: React.FC = () => {
             </select>
           </div>
         </div>
-
-        {/* Displaying filtered historical data */}
         <div className="mt-4">
           <h2 className="text-l text-white mb-4">Historical Data</h2>
           <div className="bg-gray-800 p-6 sm:p-6 rounded-lg shadow-md overflow-x-auto">

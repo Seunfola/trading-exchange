@@ -7,6 +7,7 @@ import Login from './login';
 import Signup from './signup';
 import { useAuth } from '../context/AuthContext';
 import Markets from './markets';
+import CandlestickChart from './candlestick';
 
 
 function Home() {
@@ -26,19 +27,20 @@ function Home() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="md:col-span-1">
-<div className="md:col-span-1">
+              <div className="md:col-span-1">
               <OrderBook />
             </div>
             <div className="md:col-span-1">
               <OrderForm />
             </div>
             </div>
-            
-            {/* <div className="md:col-span-1">
-              <CandlestickCharts/>
-            </div> */}
+            <div className="md:col-span-2">
+            <div className="md:col-span-1">
+              <CandlestickChart/>
+            </div>
             <div className="md:col-span-2">
               <Markets/>
+            </div>
             </div>
           </div>
         )}

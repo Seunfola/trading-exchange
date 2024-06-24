@@ -19,19 +19,14 @@ const Header: React.FC = () => {
                 <a className="hover:text-green-500">Home</a>
               </Link>
             </li>
-             <li>
-              <Link href="/wallet" legacyBehavior>
-                <a className="hover:text-green-500">Wallet</a>
+             {/* <li>
+              <Link href="/candlestick" legacyBehavior>
+                <a className="hover:text-green-500">Chart</a>
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link href="/markets" legacyBehavior>
                 <a className="hover:text-green-500">Markets</a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/wallet" legacyBehavior>
-                <a className="hover:text-green-500">Wallet</a>
               </Link>
             </li>
           </ul>
