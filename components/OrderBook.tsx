@@ -61,7 +61,7 @@ const OrderBook: React.FC = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredOrders.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredOrders.lengt h / itemsPerPage);
 
   const handlePaginationNext = () => {
     if (currentPage < totalPages) {
@@ -91,46 +91,24 @@ const OrderBook: React.FC = () => {
   return (
     <div className="bg-gray-900 p-4 sm:p-6 rounded-lg shadow-lg">
       <h2 className="text-xl sm:text-2xl font-bold text-white mb-4">Order Book</h2>
-      <div className="flex flex-col sm:flex-row justify-between mb-4 space-y-2 sm:space-y-0 sm:space-x-4">
-        <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-          <label htmlFor="filter" className="text-gray-300 sm:mr-2">Filter by:</label>
-          <select
-            id="filter"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value as 'all' | 'buy' | 'sell')}
-            className="bg-gray-700 text-white p-2 rounded w-full sm:w-auto"
-          >
-            <option value="all">All</option>
-            <option value="buy">Buy</option>
-            <option value="sell">Sell</option>
-          </select>
-        </div>
-        <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-          <label htmlFor="date" className="text-gray-300 sm:mr-2">Date:</label>
-          <input
-            type="date"
-            id="date"
-            className="bg-gray-700 text-white p-2 rounded w-full sm:w-auto"
-          />
-        </div>
-      </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr>
-              <th className="px-4 py-2 border-b border-gray-700 text-gray-300">Price</th>
-              <th className="px-4 py-2 border-b border-gray-700 text-gray-300">Amount</th>
+              <th className="px-4 py-2 border-b border-gray-700 text-gray-300">Price (USDT)</th> 
+              <th className="px-4 py-2 border-b border-gray-700 text-gray-300">Amounts (BTC)</th>
+              
               <th className="px-4 py-2 border-b border-gray-700 text-gray-300">Total</th>
-              <th className="px-4 py-2 border-b border-gray-700 text-gray-300">Type</th>
             </tr>
           </thead>
           <tbody>
             {currentItems.map((order) => (
               <tr key={order.id} className="hover:bg-gray-800">
-                <td className="px-4 py-2 border-b border-gray-700 text-white">{order.price.toFixed(2)}</td>
+                <td className={`px-4 py-2 border-b border-gray-700 text-white ${order.orderType === 'buy' ? 'text-green-500' : 'text-red-500'}`}>
+                  {order.price.toFixed(2)}
+                </td>
                 <td className="px-4 py-2 border-b border-gray-700 text-white">{order.amount.toFixed(6)}</td>
                 <td className="px-4 py-2 border-b border-gray-700 text-white">{order.total.toFixed(2)}</td>
-                <td className="px-4 py-2 border-b border-gray-700 text-white">{order.orderType}</td>
               </tr>
             ))}
           </tbody>

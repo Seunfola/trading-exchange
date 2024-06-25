@@ -1,25 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+
+interface CurrencyPair {
+  symbol: string;
+  price: number;
+}
 
 const OrderForm: React.FC = () => {
   const [mode, setMode] = useState<'buy' | 'sell'>('buy');
-  const [buyPrice, setBuyPrice] = useState<number>(0);
-  const [sellPrice, setSellPrice] = useState<number>(0);
+  const [buyPrice, setBuyPrice] = useState<number>(1);
+  const [sellPrice, setSellPrice] = useState<number>(1);
   const [quantityInUSD, setQuantityInUSD] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
   const [walletAmount, setWalletAmount] = useState<number | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [currencyPairs, setCurrencyPairs] = useState<CurrencyPair[]>([]);
+  const [selectedPair, setSelectedPair] = useState<string>('BTCUSDT');
+
+  useEffect(() => {
+    const fetchCurrencyPairs = async () => {
+      try {
+        const response = await axios.get('https://api.binance.com/api/v3/ticker/price');
+        const pairs = response.data.map((pair: { symbol: string, price: string }) => ({
+          symbol: pair.symbol,
+          price: parseFloat(pair.price),
+        }));
+        setCurrencyPairs(pairs);
+        setSelectedPair(pairs[0].symbol);
+      } catch (error) {
+        console.error('Error fetching currency pairs:', error);
+      }
+    };
+
+    fetchCurrencyPairs();
+  }, []);
 
   useEffect(() => {
     const fetchPrices = async () => {
-      try {
-        const response = await axios.get('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
-        const price = parseFloat(response.data.price);
-        setBuyPrice(1 / price); // Calculate the equivalent value of $1 in BTC
-        setSellPrice(1 / price); // Calculate the equivalent value of $1 in BTC
-      } catch (error) {
-        console.error('Error fetching prices:', error);
+      if (selectedPair) {
+        try {
+          const response = await axios.get(`https://api.binance.com/api/v3/ticker/price?symbol=${selectedPair}`);
+          const price = parseFloat(response.data.price);
+          setBuyPrice(1 / price); 
+          setSellPrice(1 / price); 
+        } catch (error) {
+          console.error('Error fetching prices:', error);
+        }
       }
     };
 
@@ -35,7 +64,7 @@ const OrderForm: React.FC = () => {
 
     fetchPrices();
     fetchWallet();
-  }, []);
+  }, [selectedPair]);
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newQuantityInUSD = parseFloat(e.target.value);
@@ -86,16 +115,50 @@ const OrderForm: React.FC = () => {
     }
   };
 
+  const handleSwapPrices = () => {
+    setBuyPrice(prevBuyPrice => {
+      const temp = prevBuyPrice;
+      setBuyPrice(sellPrice);
+      setSellPrice(temp);
+      return sellPrice;
+    });
+  };
+
+  const handlePairChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedPair(e.target.value);
+  };
+
   return (
     <div className="bg-gray-900 p-4 rounded-lg shadow-md text-white">
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center">
+          <button
+            onClick={handleSwapPrices}
+            className="bg-gray-700 text-white p-2 rounded-full mr-4 flex items-center justify-center"
+          >
+            <FontAwesomeIcon icon={faSyncAlt} />
+          </button>
+          <select
+            value={selectedPair}
+            onChange={handlePairChange}
+            className="bg-gray-700 text-white p-2 rounded"
+          >
+            {currencyPairs.map(pair => (
+              <option key={pair.symbol} value={pair.symbol}>
+                {pair.symbol}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
       {mode === 'buy' ? (
         <form onSubmit={handleBuy}>
           <div className="mb-4">
-            <label htmlFor="buyPrice" className="block mb-2">Buy Price (1 BTC)</label>
+            <label htmlFor="buyPrice" className="block mb-2">Buy Price (1 {selectedPair.split('USDT')[0]})</label>
             <input
               type="number"
               id="buyPrice"
-              value={buyPrice.toFixed(8)} // Display BTC price with 8 decimal places
+              value={buyPrice.toFixed(8)} 
               readOnly
               className="w-full bg-gray-700 p-2 rounded"
             />
@@ -108,7 +171,7 @@ const OrderForm: React.FC = () => {
               value={quantityInUSD}
               onChange={handleQuantityChange}
               className="w-full bg-gray-700 p-2 rounded"
-              min="0"
+              min="1"
               step="0.01"
             />
           </div>
@@ -117,7 +180,7 @@ const OrderForm: React.FC = () => {
             <input
               type="number"
               id="total"
-              value={total.toFixed(8)} // Display total with 8 decimal places
+              value={total.toFixed(8)} 
               readOnly
               className="w-full bg-gray-700 p-2 rounded"
             />
@@ -127,11 +190,11 @@ const OrderForm: React.FC = () => {
       ) : (
         <form onSubmit={handleSell}>
           <div className="mb-4">
-            <label htmlFor="sellPrice" className="block mb-2">Sell Price (1 BTC)</label>
+            <label htmlFor="sellPrice" className="block mb-2">Sell Price (1 {selectedPair.split('USDT')[0]})</label>
             <input
               type="number"
               id="sellPrice"
-              value={sellPrice.toFixed(8)} // Display BTC price with 8 decimal places
+              value={sellPrice.toFixed(8)} 
               readOnly
               className="w-full bg-gray-700 p-2 rounded"
             />
@@ -144,7 +207,7 @@ const OrderForm: React.FC = () => {
               value={quantityInUSD}
               onChange={handleQuantityChange}
               className="w-full bg-gray-700 p-2 rounded"
-              min="0"
+              min="1"
               step="0.01"
             />
           </div>
@@ -153,7 +216,7 @@ const OrderForm: React.FC = () => {
             <input
               type="number"
               id="total"
-              value={total.toFixed(8)} // Display total with 8 decimal places
+              value={total.toFixed(8)} 
               readOnly
               className="w-full bg-gray-700 p-2 rounded"
             />
