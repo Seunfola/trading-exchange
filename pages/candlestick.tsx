@@ -190,7 +190,7 @@ const CandlestickChart = () => {
               <div>{priceDetails.high24hr.toFixed(2)}%</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div><FontAwesomeIcon icon={faArrowDown} /> 24h Low</div>
+              <div style={{ color: 'red' }}><FontAwesomeIcon icon={faArrowDown} /> 24h Low</div>
               <div>{priceDetails.low24hr.toFixed(2)}%</div>
             </div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

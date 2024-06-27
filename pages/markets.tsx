@@ -8,7 +8,7 @@ const Markets: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [selectedPair, setSelectedPair] = useState<string>('BTCUSDT'); // Default selected pair
+  const [selectedPair, setSelectedPair] = useState<string>('BTCUSDT');
 
   const itemsPerPage = 10;
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -69,9 +69,9 @@ const Markets: React.FC = () => {
   return (
     <div className="bg-gray-900 min-h-screen">
       <main className="container mx-auto px-4 sm:px-8 py-8">
-        <h1 className="text-3xl text-white mb-4">Market Real Time Data</h1>
+        <h1 className="text-3xl flex justify-center text-white mb-4">Market Historical Data</h1>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {marketData.map((data, index) => (
             <div key={index} className={`bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md mb-8 ${index % 2 === 0 ? 'bg-blue-800' : 'bg-green-800'}`}>
               <h2 className={`text-xl mb-4 ${data.symbol === 'BTCUSDT' ? 'text-gold' : data.symbol === 'ETHUSDT' ? 'text-silver' : 'text-green-500'}`}>{data.symbol}</h2>
@@ -89,12 +89,12 @@ const Markets: React.FC = () => {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
 
         {/* Date filter */}
         <div className="mt-4">
-          <h2 className="text-xl text-white mb-2">Date Filter</h2>
-          <div className="flex items-center mb-4">
+          
+          <div className="flex items-center gap-2 mb-4">
             <label htmlFor="startDate" className="mr-2 text-white">Start Date:</label>
             <input
               type="date"
@@ -109,13 +109,7 @@ const Markets: React.FC = () => {
               className="px-3 py-1 bg-gray-800 text-white rounded"
               onChange={handleEndDateChange}
             />
-          </div>
-        </div>
-
-        
-        <div className="mt-4">
-          <h2 className="text-xl text-white mb-2">Currency Pair Filter</h2>
-          <div className="flex items-center mb-4">
+            
             <label htmlFor="pair" className="mr-2 text-white">Select Pair:</label>
             <select
               id="pair"
@@ -129,10 +123,13 @@ const Markets: React.FC = () => {
             </select>
           </div>
         </div>
+
+        
+        <div className="mt-4"> 
+        </div>
         <div className="mt-4">
-          <h2 className="text-l text-white mb-4">Historical Data</h2>
-          <div className="bg-gray-800 p-6 sm:p-6 rounded-lg shadow-md overflow-x-auto">
-            <table className="w-full sm:w-auto bg-gray-800 text-white">
+          <div className="bg-gray-800 p-6 sm:p-6 flex justify-center rounded-lg shadow-md overflow-x-auto">
+            <table className="w-full  sm:w-auto bg-gray-800 text-white">
               <thead>
                 <tr>
                   <th className="py-2 px-4 sm:px-6 border-b border-gray-700">Date</th>
@@ -144,10 +141,10 @@ const Markets: React.FC = () => {
               <tbody>
                 {currentItems.map((item, index) => (
                   <tr key={index}>
-                    <td className="py-2 px-4 sm:px-6 border-b border-gray-700">{item.date}</td>
-                    <td className="py-2 px-4 sm:px-6 border-b border-gray-700">{item.price}</td>
-                    <td className="py-2 px-4 sm:px-6 border-b border-gray-700">{item.highPrice}</td>
-                    <td className="py-2 px-4 sm:px-6 border-b border-gray-700">{item.lowPrice}</td>
+                    <td className="py-2 px-2 sm:px-6 border-b border-gray-700">{item.date}</td>
+                    <td className="py-2 px-2 sm:px-6 border-b border-gray-700">{item.price}</td>
+                    <td className="py-2 px-2 sm:px-6 border-b border-gray-700">{item.highPrice}</td>
+                    <td className="py-2 px-2 sm:px-6 border-b border-gray-700">{item.lowPrice}</td>
                   </tr>
                 ))}
               </tbody>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
-import '@fortawesome/fontawesome-free/css/all.css'
-import { useRouter } from 'next/navigation'
+import '@fortawesome/fontawesome-free/css/all.css';
+import { useRouter } from 'next/router';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -11,10 +11,7 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const router = useRouter();
-  
   const { login } = useAuth();
-
-  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,13 +24,18 @@ const Login: React.FC = () => {
         body: JSON.stringify({ email, password }),
       });
 
+      const data = await response.json();
       if (!response.ok) {
-        throw new Error('Failed to log in');
+        throw new Error(data.message);
       }
 
-      router.push('/');
+      if (data.success) {
+        login(); // This function can still be used to update your auth context
+        router.push('/');
+      } else {
+        throw new Error(data.message);
+      }
 
-      login();
       setError(null);
       setEmail('');
       setPassword('');
@@ -42,7 +44,7 @@ const Login: React.FC = () => {
     }
   };
 
-    const togglePasswordVisibility = () => {
+  const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 

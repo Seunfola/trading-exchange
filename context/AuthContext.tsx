@@ -9,24 +9,26 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-
-  useEffect(() => {
-    
-    const token = localStorage.getItem('token');
-    if (token) {
-      setIsAuthenticated(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    // Initialize isAuthenticated based on the presence of a token in localStorage
+    if (typeof localStorage !== 'undefined') {
+      return !!localStorage.getItem('token');
     }
-  }, []);
+    return false; // Default to false if localStorage is not available
+  });
 
   const login = () => {
     setIsAuthenticated(true);
-    localStorage.setItem('token', 'dummy-token'); 
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('token', 'dummy-token'); // Replace with actual token handling
+    }
   };
 
   const logout = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem('token');
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('token');
+    }
   };
 
   return (
