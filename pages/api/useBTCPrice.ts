@@ -62,7 +62,13 @@ interface MarketData {
 }
 
 export const useCurrencyPairsPrices = (symbols: string[]): MarketData[] => {
-  const [marketData, setMarketData] = useState<MarketData[]>([]);
+  const [marketData, setMarketData] = useState<MarketData[]>(symbols.map(symbol => ({
+    symbol,
+    realTimeData: null,
+    historicalData: [],
+    isLoading: true,
+    isError: false,
+  })));
 
   useEffect(() => {
     const fetchData = async () => {

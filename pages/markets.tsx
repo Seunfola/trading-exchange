@@ -71,29 +71,7 @@ const Markets: React.FC = () => {
       <main className="container mx-auto px-4 sm:px-8 py-8">
         <h1 className="text-3xl flex justify-center text-white mb-4">Market Historical Data</h1>
 
-        {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {marketData.map((data, index) => (
-            <div key={index} className={`bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md mb-8 ${index % 2 === 0 ? 'bg-blue-800' : 'bg-green-800'}`}>
-              <h2 className={`text-xl mb-4 ${data.symbol === 'BTCUSDT' ? 'text-gold' : data.symbol === 'ETHUSDT' ? 'text-silver' : 'text-green-500'}`}>{data.symbol}</h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="py-2 px-4 sm:px-6 border-b border-gray-700">BTC/USDT Price</div>
-                <div className="py-2 px-4 sm:px-6 border-b border-gray-700">{data.realTimeData?.lastPrice}</div>
-                <div className="py-2 px-4 sm:px-6 border-b border-gray-700">High Price</div>
-                <div className="py-2 px-4 sm:px-6 border-b border-gray-700">{data.realTimeData?.highPrice}</div>
-                <div className="py-2 px-4 sm:px-6 border-b border-gray-700">Low Price</div>
-                <div className="py-2 px-4 sm:px-6 border-b border-gray-700">{data.realTimeData?.lowPrice}</div>
-                <div className="py-2 px-4 sm:px-6 border-b border-gray-700">Last Updated</div>
-                <div className="py-2 px-4 sm:px-6 border-b border-gray-700">
-                  {data.realTimeData?.closeTime ? new Date(data.realTimeData.closeTime).toLocaleString() : ''}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div> */}
-
-        {/* Date filter */}
         <div className="mt-4">
-          
           <div className="flex items-center gap-2 mb-4">
             <label htmlFor="startDate" className="mr-2 text-white">Start Date:</label>
             <input
@@ -109,7 +87,6 @@ const Markets: React.FC = () => {
               className="px-3 py-1 bg-gray-800 text-white rounded"
               onChange={handleEndDateChange}
             />
-            
             <label htmlFor="pair" className="mr-2 text-white">Select Pair:</label>
             <select
               id="pair"
@@ -124,12 +101,9 @@ const Markets: React.FC = () => {
           </div>
         </div>
 
-        
-        <div className="mt-4"> 
-        </div>
         <div className="mt-4">
           <div className="bg-gray-800 p-6 sm:p-6 flex justify-center rounded-lg shadow-md overflow-x-auto">
-            <table className="w-full  sm:w-auto bg-gray-800 text-white">
+            <table className="w-full sm:w-auto bg-gray-800 text-white">
               <thead>
                 <tr>
                   <th className="py-2 px-4 sm:px-6 border-b border-gray-700">Date</th>
