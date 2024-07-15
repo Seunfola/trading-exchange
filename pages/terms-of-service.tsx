@@ -42,7 +42,7 @@ const TermsOfService: React.FC = () => {
 
         <h2 className="text-2xl mt-4 mb-2">6. Disclaimer of Warranties</h2>
         <p>
-          The services are provided "as is" and "as available" without any warranties of any kind, either express or implied. We do not warrant that the services will be uninterrupted, error-free, or secure.
+          The services are provided &quot;as is&quot; and &quot;as available&quot; without any warranties of any kind, either express or implied. We do not warrant that the services will be uninterrupted, error-free, or secure.
         </p>
 
         <h2 className="text-2xl mt-4 mb-2">7. Limitation of Liability</h2>
