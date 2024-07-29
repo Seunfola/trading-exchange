@@ -186,7 +186,7 @@ const CandlestickChart = () => {
               <div>{priceDetails.change24hr.toFixed(2)}%</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div  style={{ color: 'green' }}><FontAwesomeIcon icon={faArrowUp} /> 24h High</div>
+              <div style={{ color: 'green' }}><FontAwesomeIcon icon={faArrowUp} /> 24h High</div>
               <div>{priceDetails.high24hr.toFixed(2)}%</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
