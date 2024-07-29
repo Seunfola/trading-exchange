@@ -76,7 +76,7 @@ const OrderForm: React.FC = () => {
     <div className="bg-gray-900 p-4 sm:p-6 rounded-lg shadow-lg max-w-md mx-auto">
       <div className="flex justify-center items-center gap-1 mb-4 rounded">
         <button
-          className={`px-8 py-2 rounded-lg rounded-${side === 'BUY' ? 'bg-gray-700 text-white' : 'bg-gray-900 text-gray-400'}`}
+          className={`px-8 py-2 rounded-lg ${side === 'BUY' ? 'bg-gray-700 text-white' : 'bg-gray-900 text-gray-400'}`}
           onClick={() => setSide('BUY')}
         >
           Buy
