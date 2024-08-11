@@ -1,5 +1,3 @@
-// prisma/schema.prisma
-
 datasource db {
   provider = "cockroachdb"
   url      = env("DATABASE_URL")
@@ -30,13 +28,13 @@ model Market {
 }
 
 model User {
-  id       Int     @id @default(sequence())
-  username String  @unique
-  email    String  @unique
-  password String
-  Wallet   Wallet[]
+  id        Int        @id @default(sequence())
+  username  String     @unique
+  email     String     @unique
+  password  String
+  Wallet    Wallet[]
   OrderBook OrderBook[]
-  createdAt DateTime @default(now())
+  createdAt DateTime   @default(now())
 }
 
 model OrderBook {
@@ -47,18 +45,18 @@ model OrderBook {
   bidQuantity Float
   askQuantity Float
   userId      Int
-  user        User @relation(fields: [userId], references: [id])
-  createdAt    DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
 }
 
 model Wallet {
-  id            Int       @id @default(sequence())
-  currency      String
-  balance       Float     @default(0)
-  userId        Int
-  user          User      @relation(fields: [userId], references: [id])
-  address       String
-  privateKey    String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id         Int       @id @default(sequence())
+  currency   String
+  balance    Float     @default(0)
+  userId     Int
+  user       User      @relation(fields: [userId], references: [id])
+  address    String
+  privateKey String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }

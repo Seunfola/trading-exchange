@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import md5 from 'md5';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 
 const Auth: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -34,7 +32,6 @@ const Auth: React.FC = () => {
 
   return (
     <div className="bg-gray-900 min-h-screen">
-      <Header />
       <main className="container mx-auto py-8">
         <h1 className="text-3xl text-white mb-4">Auth</h1>
         <form onSubmit={handleSubmit} className="bg-gray-800 p-4 rounded-lg shadow-md text-white">
@@ -59,7 +56,6 @@ const Auth: React.FC = () => {
           </div>
         )}
       </main>
-      <Footer />
     </div>
   );
 }

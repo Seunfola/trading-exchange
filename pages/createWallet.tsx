@@ -9,6 +9,12 @@ const CreateWallet: React.FC = () => {
         method: 'POST',
       });
 
+      if (response.redirected) {
+        // Handle the redirection by navigating to the URL directly
+        window.location.href = response.url;
+        return;
+      }
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Error creating wallet');
@@ -30,7 +36,7 @@ const CreateWallet: React.FC = () => {
       >
         Create Wallet on Binance
       </button>
-      {message && <div className="text-green-500 mt-4">{message}</div>}
+      {message && <div className="text-red-500 mt-4">{message}</div>}
     </div>
   );
 };

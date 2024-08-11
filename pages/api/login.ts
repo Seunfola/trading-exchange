@@ -19,6 +19,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(401).json({ success: false, message: 'Invalid email or password' });
       }
 
+      console.log('User Hashed Password:', user.password); // Log for debugging
       const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (!isPasswordValid) {
