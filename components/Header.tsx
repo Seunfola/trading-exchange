@@ -33,7 +33,7 @@ const Header: React.FC = () => {
         </nav>
         <div className="search-bar relative">
       <input type="text" placeholder="Search..." className="bg-gray-700 text-white p-2 pl-8 rounded"/>
-      <i className="fas fa-search absolute inset-y-0 left-0 flex items-center pl-2 pt-3"></i>
+      <i className="fas fa-search absolute inset-y-0 left-0 flex items-center pl-2 "></i>
     </div>
       </div>
     </div>
