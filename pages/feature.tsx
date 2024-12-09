@@ -8,7 +8,7 @@ const Feature = () => {
       <div className="flex flex-col justify-center items-center w-full text-white p-8">
         <h2 className="text-4xl font-bold mt-4 mb-4">Forex Trading & Exchange</h2>
         <p className="text-lg mb-8 text-center mx-auto px-6 max-w-4xl">
-          Dive into the world of Forex trading and exchange. Access the global financial markets with cutting-edge tools and strategies. Whether you're a beginner or an experienced trader, we provide everything you need to succeed.
+          Dive into the world of Forex trading and exchange. Access the global financial markets with cutting-edge tools and strategies. Whether you&apos;re a beginner or an experienced trader, we provide everything you need to succeed.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-6">
