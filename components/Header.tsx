@@ -1,16 +1,16 @@
 import Link from 'next/link';
 import '@fortawesome/fontawesome-free/css/all.css';
 
-const Header: React.FC = () => {
+const Header = () => {
   return (
    <header className="bg-gray-800 text-white p-4 ">
     <div className="container mx-auto flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+            <Link href="/" className="flex items-center space-x-4">
         <img src="/logo.svg" alt="Blay-hub Exchange Logo" className="w-10 h-10" />
         <div className="logo text-lg font-bold">
-          Blay-hub Exchange
+          ForM Exchange
         </div>
-      </div>
+      </Link>
       <div className="flex items-center space-x-6">
         <nav>
           <ul className="flex space-x-4">
