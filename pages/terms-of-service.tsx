@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Link from 'next/link';
 import { FaFileAlt, FaEdit, FaUsers, FaGavel, FaExclamationTriangle, FaLifeRing } from "react-icons/fa";
 
 const TermsOfService = () => {
@@ -81,18 +82,16 @@ const TermsOfService = () => {
       {/* Call-to-Action Section */}
       <section className="bg-gradient-to-r from-green-600 to-blue-500 py-8 text-center">
         <h2 className="text-2xl font-bold text-white">Need More Help?</h2>
-        <p className="text-white mt-2">
+        <Link href="/contactus"className="text-white mt-2">
           Reach out to our support team at{" "}
           <a
             href="mailto:support@blayhub.com"
-            className="text-yellow-300 underline"
+            className="text-yellow-300"
           >
-            support@blayhub.com
+            support-team
           </a>
-        </p>
+        </Link>
       </section>
-
-
     </div>
   );
 };
