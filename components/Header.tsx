@@ -31,8 +31,8 @@ const Header = () => {
             </li>
           </ul>
         </nav>
-        <div className="search-bar relative">
-      <input type="text" placeholder="Search..." className="bg-gray-700 text-white p-2 pl-8 rounded"/>
+        <div className="search-bar relative ">
+      <input type="text" placeholder="Search..." className="bg-gray-700 text-white p-2 px-6 pl-8 rounded"/>
       <i className="fas fa-search absolute inset-y-0 left-0 flex items-center pl-2 "></i>
     </div>
       </div>

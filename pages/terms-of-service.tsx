@@ -50,13 +50,14 @@ const TermsOfService = () => {
 
   return (
     <div className="bg-gradient-to-b from-gray-800 to-gray-900 text-white min-h-screen flex flex-col">
-      {/* Hero Section */}
       <header className="bg-gradient-to-r from-blue-600 to-green-500 py-16 text-center shadow-md">
         <h1 className="text-4xl font-bold mb-2">Terms of Service</h1>
-        <p className="text-lg">Effective Date: {new Date().toLocaleDateString()}</p>
+        <p className="text-lg">
+          Effective Date 
+          </p>
+          {new Date().toLocaleDateString()}
       </header>
 
-      {/* Main Content */}
       <main className="container mx-auto py-8 flex-grow px-4 md:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {sections.map((section, index) => (
           <div
@@ -79,7 +80,6 @@ const TermsOfService = () => {
         ))}
       </main>
 
-      {/* Call-to-Action Section */}
       <section className="bg-gradient-to-r from-green-600 to-blue-500 py-8 text-center">
         <h2 className="text-2xl font-bold text-white">Need More Help?</h2>
         <Link href="/contactus"className="text-white mt-2">
