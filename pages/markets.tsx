@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useCurrencyPairsPrices } from './api/useBTCPrice';
 
 const Markets: React.FC = () => {
-  const symbols = ['BTCUSDT', 'ETHUSDT', 'ADAUSDT', 'XRPUSDT']; // Example currency pairs
+  const symbols = ['BTCUSDT', 'ETHUSDT', 'ADAUSDT', 'XRPUSDT']; 
   const marketData = useCurrencyPairsPrices(symbols);
 
   const [currentPage, setCurrentPage] = useState<number>(1);

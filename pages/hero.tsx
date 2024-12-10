@@ -1,4 +1,5 @@
 import Link from "next/link";
+import{ useState} from "react"
 import { useRouter } from "next/navigation";
 
 const Hero = () => {
@@ -9,13 +10,26 @@ const Hero = () => {
     router.push("/signup"); 
   };
 
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  const handleImageLoad = () => {
+    setIsLoaded(true);
+  };
 
   return (
     <div className="w-full h-screen relative">
-      <div
-        className="absolute top-0 left-0 w-full h-full bg-cover bg-center"
-        style={{ backgroundImage: "url('image.png')" }}
-      ></div>
+       {!isLoaded && (
+        <div className="absolute top-0 left-0 w-full h-full bg-gray-300 animate-pulse"></div>
+      )}
+
+      <img
+        src="image.png"
+        alt="Background"
+        className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-500 ${
+          isLoaded ? "opacity-100" : "opacity-0"
+        }`}
+        onLoad={handleImageLoad}
+      />
 
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-black/50"></div>
 
