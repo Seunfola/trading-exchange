@@ -3,7 +3,7 @@ import '@fortawesome/fontawesome-free/css/all.css';
 
 const Header: React.FC = () => {
   return (
-   <header className="bg-gray-800 text-white p-4">
+   <header className="bg-gray-800 text-white p-4 ">
     <div className="container mx-auto flex items-center justify-between">
             <div className="flex items-center space-x-4">
         <img src="/logo.svg" alt="Blay-hub Exchange Logo" className="w-10 h-10" />

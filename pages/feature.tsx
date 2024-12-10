@@ -28,13 +28,13 @@ const Feature = () => {
             <p className="text-xl font-semibold mb-2">Forex Wallet</p>
 
             <motion.p
-              className="text-sm text-gray-400 text-center"
-              animate={{ y: [0, 20, 0] }} // Moves up and down
-              transition={{
-                repeat: Infinity,
-                duration: 4,
-                ease: "easeInOut",
-              }}
+             className="text-sm text-gray-400 text-center"
+            animate={{ y: ["-10%", "60%"] }}
+            transition={{
+            repeat: Infinity,
+            duration: 4,
+            ease: "easeInOut",
+           }}
             >
               Store, transfer, and manage your digital assets securely in your wallet.
               Our advanced security ensures your funds are always safe.
@@ -57,12 +57,12 @@ const Feature = () => {
             <p className="text-xl font-semibold mb-2">Market Analysis</p>
 
             <motion.p
-              className="text-sm text-gray-400 text-center"
-              animate={{ y: [0, 20, 0] }} // Moves up and down
-              transition={{
-                repeat: Infinity,
-                duration: 4,
-                ease: "easeInOut",
+                  className="text-sm text-gray-400 text-center"
+                  animate={{ y: [ "60%", "-10%"] }} 
+                  transition={{
+                  repeat: Infinity,
+                  duration: 4, 
+                  ease: "easeInOut",
               }}
             >
               Analyze market trends and real-time data to make informed trading decisions.
@@ -70,13 +70,11 @@ const Feature = () => {
             </motion.p>
           </motion.div>
 
-          {/* Users Icon Card */}
           <motion.div
             className="flex flex-col items-center border border-gray-300 p-8 rounded-lg hover:shadow-lg bg-black w-80 h-64 relative"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            {/* Rotating Icon */}
             <motion.div
               className="flex justify-center items-center mb-4"
               animate={{ rotate: -360 }}
@@ -89,7 +87,7 @@ const Feature = () => {
 
             <motion.p
               className="text-sm text-gray-400 text-center"
-              animate={{ y: [0, 20, 0] }} // Moves up and down
+              animate={{ y: ["-10%", "60%"] }} 
               transition={{
                 repeat: Infinity,
                 duration: 4,

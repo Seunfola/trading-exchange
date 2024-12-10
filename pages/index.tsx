@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import CandlestickChart from './candlestick';
 import Hero from './hero';
 import Feature from './feature';
+import ContactUs from './contactus';
 
 function Home() {
   const { isAuthenticated } = useAuth();
@@ -21,6 +22,7 @@ function Home() {
           <div className=" grid grid-cols-1 md:col-span-1">
             <Hero />
             <Feature />
+            <ContactUs />
           </div>
         {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
 
