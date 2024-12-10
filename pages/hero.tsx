@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const Hero = () => {
@@ -35,7 +36,7 @@ const Hero = () => {
         </button>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 w-full max-w-4xl">
-          <div className="flex flex-col items-center text-center">
+          <Link href="/markets" className="flex flex-col items-center text-center">
             <div className="w-12 h-12 bg-blue-500 rounded-full flex justify-center items-center mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -56,8 +57,8 @@ const Hero = () => {
             <p className="text-gray-300 text-sm">
               Stay updated with the latest Forex and Crypto exchange rates, anytime.
             </p>
-          </div>
-          <div className="flex flex-col items-center text-center">
+          </Link>
+          <Link href="/deposit" className="flex flex-col items-center text-center">
             <div className="w-12 h-12 bg-green-500 rounded-full flex justify-center items-center mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -78,8 +79,8 @@ const Hero = () => {
             <p className="text-gray-300 text-sm">
               Trust us with safe, encrypted, and seamless trading services.
             </p>
-          </div>
-          <div className="flex flex-col items-center text-center">
+          </Link>
+          <Link href="/candlestick" className="flex flex-col items-center text-center">
             <div className="w-12 h-12 bg-red-500 rounded-full flex justify-center items-center mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -100,7 +101,7 @@ const Hero = () => {
             <p className="text-gray-300 text-sm">
               Monitor and analyze market trends with our interactive tools.
             </p>
-          </div>
+          </Link>
         </div>
       </div>
     </div>
