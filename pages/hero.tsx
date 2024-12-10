@@ -1,36 +1,39 @@
+import { useRouter } from "next/navigation";
+
 const Hero = () => {
+
+  const router = useRouter();
+
+  const handleSignupNavigation = () => {
+    router.push("/signup"); 
+  };
+
+
   return (
     <div className="w-full h-screen relative">
-      {/* Background Image */}
       <div
         className="absolute top-0 left-0 w-full h-full bg-cover bg-center"
         style={{ backgroundImage: "url('image.png')" }}
       ></div>
 
-      {/* Gradient Overlay */}
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/70 to-black/50"></div>
 
-      {/* Hero Content */}
       <div className="relative z-10 flex flex-col justify-center items-center w-full h-full text-white px-6">
-        {/* Animated Heading */}
         <h1
           className="text-5xl md:text-6xl font-extrabold text-center leading-snug tracking-tight mb-4 animate-fade-in-down"
         >
           Your One-Stop Solution for Forex and Crypto Exchange
         </h1>
 
-        {/* Subtitle */}
         <p className="text-lg md:text-xl text-gray-300 text-center mb-6 animate-fade-in-up">
           Simplify your trading journey with secure and seamless transactions. 
           Gain real-time insights, data analytics, and tailored exchange services.
         </p>
 
-        {/* Call to Action Button */}
-        <button className="px-8 py-4 bg-blue-500 text-white text-lg font-medium rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg transition-transform transform hover:scale-105 animate-fade-in-up">
+        <button className="px-8 py-4 bg-blue-500 text-white text-lg font-medium rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg transition-transform transform hover:scale-105 animate-fade-in-up" onClick={handleSignupNavigation}>
           Get Started Now
         </button>
 
-        {/* Supporting Points */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 w-full max-w-4xl">
           <div className="flex flex-col items-center text-center">
             <div className="w-12 h-12 bg-blue-500 rounded-full flex justify-center items-center mb-4">
