@@ -8,7 +8,7 @@ const cors = Cors({
   methods: ['POST', 'OPTIONS'], // Allow POST and OPTIONS methods
   origin: [
     'https://trading-exchange-peach.vercel.app/',
-    'https://trading-exchange-seunfolas-projects.vercel.app/', // Allow multiple origins
+    'https://trading-exchange-seunfolas-projects.vercel.app/',
     'https://trading-exchange-1ehq9pywq-seunfolas-projects.vercel.app',
   ],
 });
@@ -30,7 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   await runMiddleware(req, res, cors);
 
   // Handle OPTIONS preflight request
-  if (req.method === 'OPTIONS') {
+  if (req.method === 'POST') {
     res.setHeader('Allow', 'POST, OPTIONS');
     return res.status(204).end(); // No Content
   }
