@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { MarketData } from "../types/type";
 
-const BINANCE_SOCKET_URL = "https://api.binance.com/api/v3/klines";
+const BINANCE_SOCKET_URL = "wss://stream.binance.com:9443/stream";
 
 export const useCurrencyPairsPrices = (symbols: string[]): {
   marketData: MarketData[];
@@ -15,6 +15,7 @@ export const useCurrencyPairsPrices = (symbols: string[]): {
   useEffect(() => {
     if (symbols.length === 0) {
       console.error("Symbols array is empty. WebSocket not started.");
+      setIsLoading(false);
       return;
     }
 
@@ -27,8 +28,6 @@ export const useCurrencyPairsPrices = (symbols: string[]): {
 
     ws.onmessage = (event) => {
       try {
-        console.log("WebSocket raw message:", event.data);
-
         const data = JSON.parse(event.data);
         const payload = data.data;
 
@@ -37,41 +36,28 @@ export const useCurrencyPairsPrices = (symbols: string[]): {
           return;
         }
 
+        const updatedSymbolData = {
+          symbol: payload.s,
+          historicalData: [
+            {
+              date: new Date().toISOString(),
+              price: parseFloat(payload.c),
+              highPrice: parseFloat(payload.h),
+              lowPrice: parseFloat(payload.l),
+            },
+          ],
+        };
+
         setMarketData((prev) => {
-          const updated = prev.map((item) =>
-            item.symbol === payload.s
-              ? {
-                  ...item,
-                  historicalData: [
-                    ...item.historicalData,
-                    {
-                      date: new Date().toISOString(),
-                      price: parseFloat(payload.c),
-                      highPrice: parseFloat(payload.h),
-                      lowPrice: parseFloat(payload.l),
-                    },
-                  ],
-                }
-              : item
-          );
+          const existingIndex = prev.findIndex((item) => item.symbol === payload.s);
 
-          const exists = updated.some((item) => item.symbol === payload.s);
-
-          if (!exists) {
-            updated.push({
-              symbol: payload.s,
-              historicalData: [
-                {
-                  date: new Date().toISOString(),
-                  price: parseFloat(payload.c),
-                  highPrice: parseFloat(payload.h),
-                  lowPrice: parseFloat(payload.l),
-                },
-              ],
-            });
+          if (existingIndex !== -1) {
+            const updated = [...prev];
+            updated[existingIndex].historicalData.push(updatedSymbolData.historicalData[0]);
+            return updated;
           }
 
-          return updated;
+          return [...prev, updatedSymbolData];
         });
 
         setIsLoading(false);
