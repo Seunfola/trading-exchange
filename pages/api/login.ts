@@ -7,9 +7,7 @@ import prisma from '../../lib/prisma';
 const cors = Cors({
   methods: ['POST', 'OPTIONS'], // Allow POST and OPTIONS methods
   origin: [
-    'https://trading-exchange-peach.vercel.app/',
-    'https://trading-exchange-seunfolas-projects.vercel.app/',
-    'https://trading-exchange-1ehq9pywq-seunfolas-projects.vercel.app',
+    'https://url.vercel.app',
   ],
 });
 
