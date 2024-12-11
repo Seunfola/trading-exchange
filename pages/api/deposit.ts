@@ -2,8 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import Binance from 'node-binance-api';
 
 const binance = new Binance().options({
-  APIKEY: process.env.NEXT_PUBLIC_API_KEY,
-  APISECRET: process.env.NEXT_PUBLIC_SECRET_KEY,
+  APIKEY: process.env.BINANCE_API_KEY,
+  APISECRET: process.env.BINANCE_SECRET_KEY,
   useServerTime: true,
   test: true, 
 });
