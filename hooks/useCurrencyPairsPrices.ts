@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { MarketData } from "../types/type";
 
-const BINANCE_SOCKET_URL = "wss://stream.binance.com:9443/stream";
+const BINANCE_SOCKET_URL = "https://api.binance.com/api/v3/klines";
 
 export const useCurrencyPairsPrices = (symbols: string[]): {
   marketData: MarketData[];
