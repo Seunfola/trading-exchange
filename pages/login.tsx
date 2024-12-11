@@ -56,10 +56,8 @@ const Login: React.FC = () => {
           className="hidden md:block w-1/2 bg-cover bg-center"
           style={{ backgroundImage: "url('/login-image.jpg')" }}
         >
-          {/* Replace '/login-image.jpg' with your image */}
         </div>
 
-        {/* Right Side: Login Form */}
         <div className="w-full md:w-1/2 p-8">
           <h2 className="text-3xl font-bold text-center text-green-500 mb-6">Welcome Back</h2>
           {error && (
@@ -80,7 +78,7 @@ const Login: React.FC = () => {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 transition"
+                className="w-full bg-gray-100 p-3 text-gray-900 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
                 required
                 placeholder="Enter your email"
               />
@@ -98,12 +96,12 @@ const Login: React.FC = () => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 transition"
+                  className="w-full bg-gray-100 p-3 text-gray-900 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
                   required
                   placeholder="Enter your password"
                 />
                 <i
-                  className={`absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer ${
+                  className={`absolute top-3.5 right-3 cursor-pointer ${
                     showPassword ? "fas fa-eye-slash" : "fas fa-eye"
                   } text-gray-500`}
                   onClick={togglePasswordVisibility}
