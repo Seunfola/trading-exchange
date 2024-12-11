@@ -3,35 +3,45 @@ import bcrypt from 'bcryptjs';
 import prisma from '../../lib/prisma';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === 'POST') {
-    const { email, password } = req.body;
+  if (req.method !== 'POST') {
+    return res
+      .setHeader('Allow', ['POST'])
+      .status(405)
+      .json({ success: false, message: 'Method not allowed' });
+  }
 
-    if (!email || !password) {
-      return res.status(400).json({ success: false, message: 'All fields are required' });
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ success: false, message: 'All fields are required' });
+  }
+
+  try {
+    const dbStart = Date.now();
+    const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+    const dbEnd = Date.now();
+    console.log(`Database query took ${dbEnd - dbStart}ms`);
+
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Invalid email or password' });
     }
 
-    try {
-      const user = await prisma.user.findUnique({
-        where: { email },
-      });
+    console.log('User Hashed Password:', user.password);
 
-      if (!user) {
-        return res.status(401).json({ success: false, message: 'Invalid email or password' });
-      }
+    const bcryptStart = Date.now();
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const bcryptEnd = Date.now();
+    console.log(`Password comparison took ${bcryptEnd - bcryptStart}ms`);
 
-      console.log('User Hashed Password:', user.password); // Log for debugging
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-
-      if (!isPasswordValid) {
-        return res.status(401).json({ success: false, message: 'Invalid email or password' });
-      }
-
-      res.status(200).json({ success: true, message: 'Login successful', user });
-    } catch (error) {
-      res.status(500).json({ success: false, message: 'Error logging in', error: (error as Error).message });
+    if (!isPasswordValid) {
+      return res.status(401).json({ success: false, message: 'Invalid email or password' });
     }
-  } else {
-    res.status(405).json({ success: false, message: 'Method not allowed' });
+
+    const { password: _, ...userData } = user;
+    res.status(200).json({ success: true, message: 'Login successful', user: userData });
+  } catch (error) {
+    console.error('Login Error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
