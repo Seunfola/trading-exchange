@@ -35,6 +35,7 @@ model User {
   Wallet    Wallet[]
   OrderBook OrderBook[]
   createdAt DateTime   @default(now())
+  @@index([email])
 }
 
 model OrderBook {
