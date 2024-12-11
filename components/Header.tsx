@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import "@fortawesome/fontawesome-free/css/all.css";
+import TermsOfService from "./../pages/terms-of-service";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,13 +13,11 @@ const Header = () => {
   return (
     <header className="bg-gray-800 text-white p-4">
       <div className="container mx-auto flex items-center justify-between">
-        {/* Logo */}
         <Link href="/" className="flex items-center space-x-4">
           <img src="/logo.svg" alt="ForM Exchange Logo" className="w-10 h-10" />
           <div className="logo text-lg font-bold">ForM Exchange</div>
         </Link>
 
-        {/* Mobile Menu Toggle */}
         <button
           className="text-white text-2xl md:hidden focus:outline-none"
           onClick={toggleMenu}
@@ -26,7 +25,6 @@ const Header = () => {
           <i className={`fas ${isMenuOpen ? "fa-times" : "fa-bars"}`}></i>
         </button>
 
-        {/* Navigation Links */}
         <div
           className={`flex-col md:flex md:flex-row items-center md:space-x-6 transition-transform duration-300 ${
             isMenuOpen ? "flex" : "hidden md:flex"
@@ -42,9 +40,14 @@ const Header = () => {
             <Link href="/markets" legacyBehavior>
               <a className="hover:text-green-500">Markets</a>
             </Link>
+            <Link href="/contactus" legacyBehavior>
+              <a className="hover:text-green-500">contact us</a>
+            </Link>
+            <Link href="/terms-of-service" legacyBehavior>
+              <a className="hover:text-green-500">Terms of Service</a>
+            </Link>
           </nav>
 
-          {/* Search Bar */}
           <div className="search-bar relative mt-4 md:mt-0">
             <input
               type="text"

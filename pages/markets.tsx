@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useCurrencyPairsPrices } from './api/useBTCPrice';
+import Login from './login';
+import Signup from './signup';
+import { useAuth } from '../context/AuthContext';
 
-const Markets: React.FC = () => {
+
+const Markets = () => {
+    const { isAuthenticated } = useAuth();
+  const [showLogin, setShowLogin] = useState(true);
+
   const symbols = ['BTCUSDT', 'ETHUSDT', 'ADAUSDT', 'XRPUSDT']; 
   const marketData = useCurrencyPairsPrices(symbols);
 
@@ -67,6 +74,12 @@ const Markets: React.FC = () => {
   }
 
   return (
+    <> 
+          {!isAuthenticated ? (
+        <div className="flex flex-col items-center">
+          {showLogin ? <Login /> : <Signup />}
+        </div>
+      ) : (
     <div className="bg-gray-900 min-h-screen">
       <main className="container mx-auto px-4 sm:px-8 py-8">
         <h1 className="text-3xl flex justify-center text-white mb-4">Market Historical Data</h1>
@@ -143,7 +156,9 @@ const Markets: React.FC = () => {
         </div>
       </main>
     </div>
-  );
+      )}
+    </>
+    );
 };
 
 export default Markets;

@@ -5,7 +5,6 @@ import Footer from '../components/Footer';
 const PrivacyPolicy: React.FC = () => {
   return (
     <div className="bg-gray-900 min-h-screen flex flex-col">
-      <Header />
       <main className="container mx-auto py-8 flex-grow text-white">
         <h1 className="text-3xl mb-4">Privacy Policy</h1>
         <p>Effective Date: [Insert Date]</p>
@@ -50,7 +49,6 @@ const PrivacyPolicy: React.FC = () => {
           If you have any questions about this Privacy Policy, please contact us at [Insert Contact Information].
         </p>
       </main>
-      <Footer />
     </div>
   );
 };

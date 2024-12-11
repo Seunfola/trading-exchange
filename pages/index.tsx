@@ -10,8 +10,8 @@ import ContactUs from './contactus';
 import TermsOfService from './terms-of-service';
 
 function Home() {
-  const { isAuthenticated } = useAuth();
-  const [showLogin, setShowLogin] = useState(true);
+  // const { isAuthenticated } = useAuth();
+  // const [showLogin, setShowLogin] = useState(true);
 
   return (
     <>
