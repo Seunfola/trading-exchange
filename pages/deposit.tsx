@@ -55,23 +55,25 @@ const Deposit: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 via-blue-500 to-indigo-800 p-6">
-      <div className="bg-white text-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-lg">
+      <div className="bg-white text-gray-800 p-8 rounded-2xl shadow-2xl max-w-md w-full">
         <div className="text-center">
           <FontAwesomeIcon
             icon={faWallet}
-            className="text-indigo-500 text-5xl mb-4 animate-pulse"
+            className="text-indigo-500 text-5xl mb-4 animate-bounce"
           />
-          <h2 className="text-4xl font-bold mb-4">Deposit Funds</h2>
+          <h2 className="text-3xl font-extrabold text-gray-800 mb-2">
+            Deposit Funds
+          </h2>
           <p className="text-gray-500">Add funds to your wallet securely</p>
         </div>
 
-        <div className="mt-6">
-          <label className="block text-sm font-semibold text-gray-600 mb-2">
+        <div className="mt-8">
+          <label className="block text-sm font-medium text-gray-600 mb-2">
             Enter Amount
           </label>
           <input
             type="text"
-            className="w-full bg-gray-100 text-gray-800 py-3 px-4 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="block w-full bg-gray-100 text-gray-800 py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm placeholder-gray-400"
             placeholder="Enter amount (e.g., 100)"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
@@ -81,7 +83,7 @@ const Deposit: React.FC = () => {
         <button
           onClick={handleDeposit}
           disabled={loading}
-          className={`mt-6 w-full py-3 rounded-lg font-semibold text-white shadow-lg transition-transform transform ${
+          className={`mt-6 w-full py-3 rounded-lg font-bold text-white transition-transform transform shadow-lg ${
             loading
               ? "bg-indigo-400 cursor-not-allowed"
               : "bg-indigo-600 hover:bg-indigo-700 hover:scale-105"

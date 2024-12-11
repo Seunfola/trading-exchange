@@ -75,11 +75,10 @@ const ContactUs = () => {
                 href="mailto:support@cryptoexchange.com"
                 className="text-blue-500 hover:underline"
               >
-                support@cryptoexchange.com
+                cryptoexchange.com
               </a>
             </p>
             <p className="text-gray-600">
-              Phone:{" "}
               <a
                 href="tel:+2348152832520"
                 className="text-blue-500 hover:underline"
