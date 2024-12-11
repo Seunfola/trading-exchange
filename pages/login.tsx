@@ -17,7 +17,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     try {
       const response = await fetch(
-        "https://trading-exchange-peach.vercel.app/api/login", {
+        "api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
