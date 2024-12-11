@@ -11,7 +11,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gray-800 text-white px-4 py-6">
+    <header className="bg-gray-800 text-white px-4 py-6 md:py-6 md:px-4">
       <div className="container mx-auto flex items-center justify-between">
         <Link href="/" className="flex items-center space-x-4">
           <img src="/logo.svg" alt="ForM Exchange Logo" className="w-10 h-10" />
@@ -52,9 +52,9 @@ const Header = () => {
             <input
               type="text"
               placeholder="Search..."
-              className="bg-gray-700 text-white p-2 px-6 pl-8 rounded w-full md:w-auto"
+              className="bg-gray-700 text-white py-2 px-8 pl-10 rounded w-full md:mx-auto"
             />
-            <i className="fas fa-search absolute inset-y-0 left-2 flex items-center"></i>
+            <i className="fas fa-search absolute inset-y-0 left-3 flex items-center text-gray-400"></i>
           </div>
         </div>
       </div>
