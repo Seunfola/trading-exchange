@@ -1,8 +1,15 @@
+import Cors from 'cors'
+
 import { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcryptjs';
 import prisma from '../../lib/prisma';
 
 const PASSWORD_REGEX = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+
+const cors = Cors({
+methods: ['POST', 'OPTIONS'],
+origin: ['https://trading-exchange-peach.vercel.app/'], 
+});
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
