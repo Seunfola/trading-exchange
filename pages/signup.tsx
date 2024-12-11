@@ -12,7 +12,6 @@ const Signup: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const { login } = useAuth();
-
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -49,11 +48,14 @@ const Signup: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-green-500">
       <div className="flex flex-col md:flex-row bg-white rounded-lg shadow-lg overflow-hidden w-full max-w-7xl">
-        <div className="hidden md:block w-1/2 bg-cover bg-center" style={{ backgroundImage: "url('/signup-image.jpg')" }}>
-        </div>
-
+        <div
+          className="hidden md:block w-1/2 bg-cover bg-center"
+          style={{ backgroundImage: "url('/signup-image.jpg')" }}
+        ></div>
         <div className="w-full md:w-1/2 p-8">
-          <h2 className="text-3xl font-bold text-center text-blue-500 mb-6">Create Your Account</h2>
+          <h2 className="text-3xl font-bold text-center text-blue-500 mb-6">
+            Create Your Account
+          </h2>
           {error && (
             <p className="bg-red-100 border border-red-500 text-red-700 p-2 rounded mb-4 text-center">
               {error}
@@ -72,7 +74,7 @@ const Signup: React.FC = () => {
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+                className="w-full bg-gray-100 p-3 text-gray-900 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
                 required
                 placeholder="Enter your username"
               />
@@ -89,7 +91,7 @@ const Signup: React.FC = () => {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+                className="w-full bg-gray-100 p-3 text-gray-900 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
                 required
                 placeholder="Enter your email"
               />
@@ -107,12 +109,12 @@ const Signup: React.FC = () => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-gray-100 p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+                  className="w-full bg-gray-100 p-3 text-gray-900 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
                   required
                   placeholder="Enter your password"
                 />
                 <i
-                  className={`absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer ${
+                  className={`absolute top-3.5 right-3 cursor-pointer ${
                     showPassword ? "fas fa-eye-slash" : "fas fa-eye"
                   } text-gray-500`}
                   onClick={togglePasswordVisibility}
