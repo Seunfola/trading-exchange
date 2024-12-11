@@ -76,7 +76,6 @@ export const useCurrencyPairsPrices = (symbols: string[]): {
       console.log("WebSocket connection to Binance closed.");
     };
 
-    // Cleanup WebSocket on component unmount
     return () => {
       if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
         ws.close();
