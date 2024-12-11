@@ -5,7 +5,7 @@ import Signup from "./signup";
 import { useAuth } from "../context/AuthContext";
 import { MarketData, HistoricalData } from "../types/type";
 
-const Markets = () => {
+const Markets: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const [showLogin, setShowLogin] = useState<boolean>(true);
 
@@ -20,10 +20,12 @@ const Markets = () => {
   const itemsPerPage = 10;
 
   const filteredHistoricalData: HistoricalData[] =
-    marketData.find((data: MarketData) => data.symbol === selectedPair)?.historicalData.filter((item: HistoricalData) => {
-      const itemDate = new Date(item.date);
-      return (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate);
-    }) || [];
+    marketData
+      .find((data: MarketData) => data.symbol === selectedPair)
+      ?.historicalData.filter((item: HistoricalData) => {
+        const itemDate = new Date(item.date);
+        return (!startDate || itemDate >= startDate) && (!endDate || itemDate <= endDate);
+      }) || [];
 
   const currentItems = filteredHistoricalData.slice(
     (currentPage - 1) * itemsPerPage,
@@ -44,50 +46,87 @@ const Markets = () => {
     setSelectedPair(e.target.value);
   };
 
-  if (isLoading) return <div className="text-white">Loading...</div>;
-  if (isError) return <div className="text-red-500">Error loading data...</div>;
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>, isStartDate: boolean) => {
+    const date = e.target.valueAsDate;
+    if (isStartDate) {
+      setStartDate(date);
+    } else {
+      setEndDate(date);
+    }
+  };
+
+  if (isLoading) return <div className="text-white text-center mt-10">Loading data...</div>;
+  if (isError) return <div className="text-red-500 text-center mt-10">Error loading data. Please try again later.</div>;
 
   return !isAuthenticated ? (
-    <div className="flex flex-col items-center">{showLogin ? <Login /> : <Signup />}</div>
+    <div className="flex flex-col items-center">
+      {showLogin ? <Login /> : <Signup />}
+    </div>
   ) : (
     <div className="bg-gray-900 min-h-screen">
       <main className="container mx-auto px-4 sm:px-8 py-8">
-        <h1 className="text-3xl text-white text-center mb-6">Market Historical Data</h1>
+        <h1 className="text-3xl text-white text-center font-bold mb-6">Market Historical Data</h1>
 
-        <div className="flex items-center gap-4 mb-6">
-          <label className="text-white">Select Pair:</label>
-          <select
-            value={selectedPair}
-            onChange={handlePairChange}
-            className="bg-gray-800 text-white rounded px-3 py-2"
-          >
-            {symbols.map((symbol) => (
-              <option key={symbol} value={symbol}>
-                {symbol}
-              </option>
-            ))}
-          </select>
+        <div className="flex flex-wrap items-center gap-4 mb-6 justify-center">
+          <div>
+            <label className="block text-white mb-1">Select Pair:</label>
+            <select
+              value={selectedPair}
+              onChange={handlePairChange}
+              className="bg-gray-800 text-white rounded px-3 py-2"
+            >
+              {symbols.map((symbol) => (
+                <option key={symbol} value={symbol}>
+                  {symbol}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-white mb-1">Start Date:</label>
+            <input
+              type="date"
+              onChange={(e) => handleDateChange(e, true)}
+              className="bg-gray-800 text-white rounded px-3 py-2"
+            />
+          </div>
+          <div>
+            <label className="block text-white mb-1">End Date:</label>
+            <input
+              type="date"
+              onChange={(e) => handleDateChange(e, false)}
+              className="bg-gray-800 text-white rounded px-3 py-2"
+            />
+          </div>
         </div>
 
         <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
           <table className="w-full text-white">
             <thead>
               <tr>
-                <th className="px-4 py-2">Date</th>
-                <th className="px-4 py-2">Price</th>
-                <th className="px-4 py-2">High</th>
-                <th className="px-4 py-2">Low</th>
+                <th className="px-4 py-2 border-b border-gray-700">Date</th>
+                <th className="px-4 py-2 border-b border-gray-700">Price</th>
+                <th className="px-4 py-2 border-b border-gray-700">High</th>
+                <th className="px-4 py-2 border-b border-gray-700">Low</th>
               </tr>
             </thead>
             <tbody>
-              {currentItems.map((item: HistoricalData, index: number) => (
-                <tr key={index}>
-                  <td className="px-4 py-2">{item.date}</td>
-                  <td className="px-4 py-2">{item.price}</td>
-                  <td className="px-4 py-2">{item.highPrice}</td>
-                  <td className="px-4 py-2">{item.lowPrice}</td>
+              {currentItems.length > 0 ? (
+                currentItems.map((item: HistoricalData, index: number) => (
+                  <tr key={index}>
+                    <td className="px-4 py-2 border-b border-gray-700">{item.date}</td>
+                    <td className="px-4 py-2 border-b border-gray-700">{item.price}</td>
+                    <td className="px-4 py-2 border-b border-gray-700">{item.highPrice}</td>
+                    <td className="px-4 py-2 border-b border-gray-700">{item.lowPrice}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="text-center py-4 text-gray-500">
+                    No data available for the selected range.
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

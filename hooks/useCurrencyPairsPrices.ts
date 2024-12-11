@@ -13,7 +13,10 @@ export const useCurrencyPairsPrices = (symbols: string[]): {
   const [isError, setIsError] = useState<boolean>(false);
 
   useEffect(() => {
-    if (symbols.length === 0) return;
+    if (symbols.length === 0) {
+      console.error("Symbols array is empty. WebSocket not started.");
+      return;
+    }
 
     const streams = symbols.map((symbol) => `${symbol.toLowerCase()}@ticker`).join("/");
     const ws = new WebSocket(`${BINANCE_SOCKET_URL}?streams=${streams}`);
@@ -24,44 +27,51 @@ export const useCurrencyPairsPrices = (symbols: string[]): {
 
     ws.onmessage = (event) => {
       try {
+        console.log("WebSocket raw message:", event.data);
+
         const data = JSON.parse(event.data);
         const payload = data.data;
 
+        if (!payload || !payload.s || !payload.c || !payload.h || !payload.l) {
+          console.warn("Invalid payload structure:", payload);
+          return;
+        }
+
         setMarketData((prev) => {
-          const existing = prev.find((item) => item.symbol === payload.s);
-          if (existing) {
-            return prev.map((item) =>
-              item.symbol === payload.s
-                ? {
-                    ...item,
-                    historicalData: [
-                      ...item.historicalData,
-                      {
-                        date: new Date().toISOString(),
-                        price: parseFloat(payload.c),
-                        highPrice: parseFloat(payload.h),
-                        lowPrice: parseFloat(payload.l),
-                      },
-                    ],
-                  }
-                : item
-            );
-          } else {
-            return [
-              ...prev,
-              {
-                symbol: payload.s,
-                historicalData: [
-                  {
-                    date: new Date().toISOString(),
-                    price: parseFloat(payload.c),
-                    highPrice: parseFloat(payload.h),
-                    lowPrice: parseFloat(payload.l),
-                  },
-                ],
-              },
-            ];
+          const updated = prev.map((item) =>
+            item.symbol === payload.s
+              ? {
+                  ...item,
+                  historicalData: [
+                    ...item.historicalData,
+                    {
+                      date: new Date().toISOString(),
+                      price: parseFloat(payload.c),
+                      highPrice: parseFloat(payload.h),
+                      lowPrice: parseFloat(payload.l),
+                    },
+                  ],
+                }
+              : item
+          );
+
+          const exists = updated.some((item) => item.symbol === payload.s);
+
+          if (!exists) {
+            updated.push({
+              symbol: payload.s,
+              historicalData: [
+                {
+                  date: new Date().toISOString(),
+                  price: parseFloat(payload.c),
+                  highPrice: parseFloat(payload.h),
+                  lowPrice: parseFloat(payload.l),
+                },
+              ],
+            });
           }
+
+          return updated;
         });
 
         setIsLoading(false);
@@ -71,8 +81,8 @@ export const useCurrencyPairsPrices = (symbols: string[]): {
       }
     };
 
-    ws.onerror = () => {
-      console.error("WebSocket error");
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
       setIsError(true);
     };
 
@@ -80,8 +90,11 @@ export const useCurrencyPairsPrices = (symbols: string[]): {
       console.log("WebSocket connection to Binance closed.");
     };
 
+    // Cleanup WebSocket on component unmount
     return () => {
-      ws.close();
+      if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+        ws.close();
+      }
     };
   }, [symbols]);
 
