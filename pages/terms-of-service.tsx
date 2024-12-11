@@ -54,7 +54,7 @@ const TermsOfService = () => {
         <h1 className="text-4xl font-bold mb-2">Terms of Service</h1>
         <p className="text-lg">
           Kindly take your time to check the terms and conditions.
-          </p>
+        </p>
       </header>
 
       <main className="container mx-auto py-8 flex-grow px-4 md:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
