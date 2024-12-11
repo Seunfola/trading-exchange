@@ -41,10 +41,10 @@ const Header = () => {
               <a className="hover:text-green-500">Markets</a>
             </Link>
             <Link href="/contactus" legacyBehavior>
-              <a className="hover:text-green-500">contact us</a>
+              <a className="hover:text-green-500">contact</a>
             </Link>
             <Link href="/terms-of-service" legacyBehavior>
-              <a className="hover:text-green-500">Terms of Service</a>
+              <a className="hover:text-green-500">Terms </a>
             </Link>
           </nav>
 
