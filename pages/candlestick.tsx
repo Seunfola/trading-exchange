@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { ApexOptions } from "apexcharts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUp, faArrowDown, faChartLine, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faArrowUp, faArrowDown, faChartLine, faClock, faSyncAlt } from "@fortawesome/free-solid-svg-icons";
 
 dayjs.extend(utc);
 
@@ -36,9 +36,7 @@ const CandlestickChart = () => {
   const [symbolList, setSymbolList] = useState<string[]>([]);
   const [selectedSymbol, setSelectedSymbol] = useState<string>("");
   const [selectedInterval, setSelectedInterval] = useState<MainInterval>("1h");
-  const [selectedPredefinedInterval, setSelectedPredefinedInterval] = useState<AdditionalInterval | "1m">("1m");
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [intervalDropdownOpen, setIntervalDropdownOpen] = useState(false);
   const [priceDetails, setPriceDetails] = useState({
     currentPrice: 0,
     change24h: 0,
@@ -52,18 +50,43 @@ const CandlestickChart = () => {
     chart: {
       height: 450,
       type: "candlestick",
-      toolbar: { show: false },
+      background: "#1f2937",
+      animations: {
+        enabled: true,
+        easing: "easeinout",
+        speed: 800,
+      },
+      toolbar: {
+        show: true,
+        tools: {
+          download: true,
+        },
+      },
     },
     title: {
-      text: "Data Chart Trend",
-      align: "left",
+      text: "Futuristic Candlestick Chart",
+      align: "center",
+      style: {
+        color: "#e5e7eb",
+        fontSize: "20px",
+      },
     },
     xaxis: {
       type: "datetime",
+      labels: {
+        style: {
+          colors: "#a0aec0",
+        },
+      },
     },
     yaxis: {
       tooltip: {
         enabled: true,
+      },
+      labels: {
+        style: {
+          colors: "#a0aec0",
+        },
       },
     },
     tooltip: {
@@ -87,7 +110,7 @@ const CandlestickChart = () => {
   const fetchData = async () => {
     try {
       if (!selectedSymbol) return;
-      const startTime = predefinedIntervals[selectedPredefinedInterval]?.getTime() || dayjs().subtract(1, "month").toDate().getTime();
+      const startTime = predefinedIntervals[selectedInterval]?.getTime() || dayjs().subtract(1, "month").toDate().getTime();
       const endTime = new Date().getTime();
       const url = `https://api.binance.com/api/v3/klines?symbol=${selectedSymbol}&interval=${selectedInterval}&startTime=${startTime}&endTime=${endTime}&limit=1000`;
       const response = await fetch(url);
@@ -142,21 +165,23 @@ const CandlestickChart = () => {
 
   useEffect(() => {
     fetchData();
-  }, [selectedSymbol, selectedInterval, selectedPredefinedInterval]);
+  }, [selectedSymbol, selectedInterval]);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 text-sm">
-      <div className="mb-4">
-        <div className="flex items-center justify-between">
-          <div className="relative inline-block">
+    <div className="bg-gray-900 text-white min-h-screen p-8">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-4xl font-extrabold text-center mb-6">Candlestick Chart</h1>
+
+        <div className="flex justify-between items-center mb-6">
+          <div className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring bg-gray-700 text-white"
+              className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded flex items-center gap-2"
             >
-              {selectedSymbol || "Select Symbol"} <FaChevronDown className="ml-2" />
+              {selectedSymbol || "Select Symbol"} <FaChevronDown />
             </button>
             {dropdownOpen && (
-              <div className="absolute left-0 w-40 bg-gray-700 border border-gray-200 rounded-md mt-1 z-10 max-h-48 overflow-y-scroll">
+              <div className="absolute left-0 mt-2 bg-gray-800 rounded shadow-lg max-h-60 overflow-y-auto">
                 {symbolList.map((symbol) => (
                   <div
                     key={symbol}
@@ -164,7 +189,7 @@ const CandlestickChart = () => {
                       setSelectedSymbol(symbol);
                       setDropdownOpen(false);
                     }}
-                    className="px-4 py-2 cursor-pointer hover:bg-gray-600 text-white"
+                    className="px-4 py-2 cursor-pointer hover:bg-gray-700"
                   >
                     {symbol}
                   </div>
@@ -172,23 +197,50 @@ const CandlestickChart = () => {
               </div>
             )}
           </div>
+
+          <div className="flex space-x-4">
+            {mainIntervals.map((interval) => (
+              <button
+                key={interval}
+                onClick={() => setSelectedInterval(interval)}
+                className={`px-4 py-2 rounded ${
+                  selectedInterval === interval
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-600 text-gray-300 hover:bg-gray-500"
+                }`}
+              >
+                {interval.toUpperCase()}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="mb-4 flex justify-end">
-        {mainIntervals.map((interval) => (
-          <button
-            key={interval}
-            onClick={() => setSelectedInterval(interval)}
-            className={`px-2 py-1 ${selectedInterval === interval ? "bg-gray-700 text-white rounded" : "bg-gray-200 text-black"} rounded-md`}
-          >
-            {interval.toUpperCase()}
-          </button>
-        ))}
-      </div>
+        <div className="bg-gray-800 p-6 rounded-lg shadow-xl">
+          <ReactApexChart options={options} series={series} type="candlestick" height={450} />
+        </div>
 
-      <div className="py-6">
-        <ReactApexChart options={options} series={series} type="candlestick" height={450} />
+        <div className="flex justify-around items-center mt-6 text-sm">
+          <div className="text-center">
+            <FontAwesomeIcon icon={faChartLine} className="text-green-400 text-lg" />
+            <p>Current Price</p>
+            <p className="font-bold">${priceDetails.currentPrice.toFixed(2)}</p>
+          </div>
+          <div className="text-center">
+            <FontAwesomeIcon icon={faArrowUp} className="text-blue-400 text-lg" />
+            <p>High 24h</p>
+            <p className="font-bold">${priceDetails.high24h.toFixed(2)}</p>
+          </div>
+          <div className="text-center">
+            <FontAwesomeIcon icon={faArrowDown} className="text-red-400 text-lg" />
+            <p>Low 24h</p>
+            <p className="font-bold">${priceDetails.low24h.toFixed(2)}</p>
+          </div>
+          <div className="text-center">
+            <FontAwesomeIcon icon={faClock} className="text-yellow-400 text-lg" />
+            <p>Volume 24h</p>
+            <p className="font-bold">{priceDetails.volume24h.toFixed(2)}</p>
+          </div>
+        </div>
       </div>
     </div>
   );
