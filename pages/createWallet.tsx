@@ -1,17 +1,78 @@
-import React, { useState } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faWallet, faCheckCircle, faTimesCircle, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import {
+  faWallet,
+  faCheckCircle,
+  faTimesCircle,
+  faSpinner,
+} from "@fortawesome/free-solid-svg-icons";
+import { useWallet } from "../context/WalletContext";
 
-const CreateWallet: React.FC = () => {
-  const [message, setMessage] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+interface LoadingButtonProps {
+  loading: boolean;
+  onClick: () => void;
+  label: string;
+  loadingLabel?: string;
+  disabled?: boolean;
+}
+
+const LoadingButton = ({
+  loading,
+  onClick,
+  label,
+  loadingLabel = "Loading...",
+  disabled = false,
+}: LoadingButtonProps) => (
+  <button
+    onClick={onClick}
+    disabled={loading || disabled}
+    aria-label={loading ? loadingLabel : label}
+    aria-busy={loading}
+    aria-disabled={loading}
+    className={`mt-6 w-full py-3 rounded-lg font-semibold text-white shadow-lg transition-transform transform ${
+      loading
+        ? "bg-indigo-400 cursor-not-allowed"
+        : "bg-indigo-600 hover:bg-indigo-700 hover:scale-105"
+    }`}
+  >
+    {loading ? (
+      <>
+        <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
+        {loadingLabel}
+      </>
+    ) : (
+      label
+    )}
+  </button>
+);
+
+const MessageBanner = ({ message }: { message: string }) => {
+  const isError = message.toLowerCase().includes("error");
+  return (
+    <div
+      className={`flex items-center gap-2 mt-4 px-4 py-3 rounded-lg ${
+        isError
+          ? "bg-red-100 border border-red-400 text-red-700"
+          : "bg-green-100 border border-green-400 text-green-700"
+      }`}
+    >
+      <FontAwesomeIcon icon={isError ? faTimesCircle : faCheckCircle} />
+      <span>{message}</span>
+    </div>
+  );
+};
+
+const CreateWallet = () => {
+  const { wallet, setWallet } = useWallet();
 
   const handleCreateWallet = async () => {
-    setLoading(true);
-    setMessage(null);
+    setWallet({ ...wallet, loading: true, message: null });
     try {
       const response = await fetch("/api/createWallet", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
       if (response.redirected) {
@@ -25,11 +86,13 @@ const CreateWallet: React.FC = () => {
       }
 
       const responseData = await response.json();
-      setMessage(responseData.message);
+      setWallet({ ...wallet, loading: false, message: responseData.message });
     } catch (error) {
-      setMessage((error as Error).message || "Error creating wallet");
-    } finally {
-      setLoading(false);
+      setWallet({
+        ...wallet,
+        loading: false,
+        message: (error as Error).message || "Error creating wallet",
+      });
     }
   };
 
@@ -47,26 +110,14 @@ const CreateWallet: React.FC = () => {
           </p>
         </div>
 
-        <button
+        <LoadingButton
+          loading={wallet.loading}
           onClick={handleCreateWallet}
-          disabled={loading}
-          className={`mt-6 w-full py-3 rounded-lg font-semibold text-white shadow-lg transition-transform transform ${
-            loading
-              ? "bg-indigo-400 cursor-not-allowed"
-              : "bg-indigo-600 hover:bg-indigo-700 hover:scale-105"
-          }`}
-        >
-          {loading ? (
-            <>
-              <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
-              Creating Wallet...
-            </>
-          ) : (
-            "Create Wallet on Binance"
-          )}
-        </button>
+          label="Create Wallet on Binance"
+          loadingLabel="Creating Wallet..."
+        />
 
-        {loading && (
+        {wallet.loading && (
           <div className="text-center text-gray-700 mt-4">
             <FontAwesomeIcon
               icon={faSpinner}
@@ -77,24 +128,7 @@ const CreateWallet: React.FC = () => {
           </div>
         )}
 
-        {message && (
-          <div
-            className={`flex items-center gap-2 mt-4 px-4 py-3 rounded-lg ${
-              message.toLowerCase().includes("error")
-                ? "bg-red-100 border border-red-400 text-red-700"
-                : "bg-green-100 border border-green-400 text-green-700"
-            }`}
-          >
-            <FontAwesomeIcon
-              icon={
-                message.toLowerCase().includes("error")
-                  ? faTimesCircle
-                  : faCheckCircle
-              }
-            />
-            <span>{message}</span>
-          </div>
-        )}
+        {wallet.message && <MessageBanner message={wallet.message} />}
       </div>
     </div>
   );

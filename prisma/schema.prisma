@@ -53,11 +53,10 @@ model OrderBook {
 model Wallet {
   id         Int       @id @default(sequence())
   currency   String
-  balance    Float     @default(0)
+  balance    Float     @default(0.0)
   userId     Int
   user       User      @relation(fields: [userId], references: [id])
   address    String
-  privateKey String?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 }
