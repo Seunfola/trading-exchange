@@ -73,6 +73,7 @@ const CreateWallet = () => {
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ useThirdParty: false }), // Specify if using third-party or custom wallet creation
       });
 
       if (response.redirected) {

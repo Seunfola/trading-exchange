@@ -21,25 +21,14 @@ model TradingPair {
 }
 
 model Market {
-  id     Int     @id @default(sequence())
+  id     Int    @id @default(sequence())
   name   String
   price  Float
   change Float
 }
 
-model User {
-  id        Int        @id @default(sequence())
-  username  String     @unique
-  email     String     @unique
-  password  String
-  Wallet    Wallet[]
-  OrderBook OrderBook[]
-  createdAt DateTime   @default(now())
-  @@index([email])
-}
-
 model OrderBook {
-  id          Int     @id @default(sequence())
+  id          Int      @id @default(sequence())
   symbol      String
   bidPrice    Float
   askPrice    Float
@@ -50,13 +39,40 @@ model OrderBook {
   createdAt   DateTime @default(now())
 }
 
+model Deposit {
+  id        Int      @id @default(sequence())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  walletId  Int
+  wallet    Wallet   @relation(fields: [walletId], references: [id])
+  amount    Float
+  currency  String   @default("ETH")
+  status    String   @default("PENDING") // PENDING, COMPLETED, FAILED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Wallet {
-  id         Int       @id @default(sequence())
-  currency   String
-  balance    Float     @default(0.0)
-  userId     Int
-  user       User      @relation(fields: [userId], references: [id])
-  address    String
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id        Int       @id @default(sequence())
+  balance   Float     @default(0.0)
+  currency  String    @default("ETH")
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  deposits  Deposit[] // Relation to the Deposit model
+  address   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model User {
+  id        Int         @id @default(sequence())
+  username  String      @unique
+  email     String      @unique
+  password  String
+  Wallets   Wallet[]
+  deposits  Deposit[] // Relation to the Deposit model
+  createdAt DateTime    @default(now())
+  OrderBook OrderBook[]
+
+  @@index([email])
 }
