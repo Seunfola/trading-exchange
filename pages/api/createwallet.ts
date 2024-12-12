@@ -1,4 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { ThirdwebSDK } from '@thirdweb-dev/sdk';
+import { ethers } from 'ethers';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   console.log('Request method:', req.method);
@@ -9,18 +11,34 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    const apiKey = process.env.NEXT_PUBLIC_BINANCE_API_KEY;
-    if (!apiKey) {
-      throw new Error('API key is not set');
+    // Check if the request specifies using third-party service
+    if (req.body.useThirdParty) {
+      const thirdPartyWalletCreationUrl = 'https://thirdpartywallet.com/create-wallet';
+      console.log('Redirecting to:', thirdPartyWalletCreationUrl);
+      return res.redirect(307, thirdPartyWalletCreationUrl);
     }
 
-    const binanceWalletCreationUrl = 'https://www.binance.com/en/wallet.html';
-    console.log('Redirecting to:', binanceWalletCreationUrl);
-    return res.redirect(307, binanceWalletCreationUrl);
+    // Otherwise, use Thirdweb to create a wallet
+    const infuraUrl = process.env.INFURA_URL;
+    const privateKey = process.env.PRIVATE_KEY;
+
+    if (!infuraUrl || !privateKey) {
+      throw new Error('Environment variables INFURA_URL and PRIVATE_KEY must be set');
+    }
+
+    const provider = new ethers.providers.JsonRpcProvider(infuraUrl);
+    const wallet = new ethers.Wallet(privateKey, provider);
+    const sdk = new ThirdwebSDK(wallet);
+
+    const createdWallet = await sdk.wallet.create();
+
+    console.log('Wallet creation response:', createdWallet);
+    return res.status(201).json({ address: createdWallet.address });
   } catch (error) {
     console.error('Error creating wallet:', error);
-    res.status(500).json({ message: (error as Error).message || 'Error creating wallet' });
+    res.status(500).json({ message: error instanceof Error ? error.message : 'Error creating wallet' });
   }
 };
 
 export default handler;
+
