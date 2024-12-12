@@ -1,40 +1,9 @@
-import Cors from 'cors';
+import Cors from 'cors'
 import { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcryptjs';
 import prisma from '../../lib/prisma';
 
-// Initialize the CORS middleware
-const cors = Cors({
-  methods: ['POST', 'OPTIONS'], // Allow POST and OPTIONS methods
-  origin: [
-    'https://trading-exchange-peach.vercel.app/',
-    'https://trading-exchange-seunfolas-projects.vercel.app/', // Allow multiple origins
-    'https://trading-exchange-1ehq9pywq-seunfolas-projects.vercel.app',
-  ],
-});
-
-// Helper function to run middleware
-function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: Function) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result: any) => {
-      if (result instanceof Error) {
-        return reject(result);
-      }
-      return resolve(result);
-    });
-  });
-}
-
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  // Run the CORS middleware
-  await runMiddleware(req, res, cors);
-
-  // Handle OPTIONS preflight request
-  if (req.method === 'OPTIONS') {
-    res.setHeader('Allow', 'POST, OPTIONS');
-    return res.status(204).end(); // No Content
-  }
-
   if (req.method !== 'POST') {
     return res
       .setHeader('Allow', ['POST'])
