@@ -2,7 +2,14 @@ import Cors from 'cors'
 import { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcryptjs';
 import prisma from '../../lib/prisma';
+import jwt from 'jsonwebtoken';
 
+const secretKey = 'process.env. SECRET_KEY';
+const cors = Cors({
+  methods: ['POST', 'OPTIONS'],
+  origin: ['https://trading-exchange-peach.vercel.app/'], 
+  credentials: true,
+});
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
     return res
@@ -29,7 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     console.log('User Hashed Password:', user.password);
 
-    const bcryptStart = Date.now();
+  const bcryptStart = Date.now();
     const isPasswordValid = await bcrypt.compare(password, user.password);
     const bcryptEnd = Date.now();
     console.log(`Password comparison took ${bcryptEnd - bcryptStart}ms`);
@@ -38,8 +45,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(401).json({ success: false, message: 'Invalid email or password' });
     }
 
-    const { password: _, ...userData } = user;
-    res.status(200).json({ success: true, message: 'Login successful', user: userData });
+    const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn: '1h' });
+    res.status(200).json({ success: true, message: 'Login successful', token });
   } catch (error) {
     console.error('Login Error:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });

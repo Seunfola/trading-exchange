@@ -30,7 +30,7 @@ const Login: React.FC = () => {
       }
 
       if (data.success) {
-        login(); // Update auth context
+        login();
         router.push("/");
       } else {
         throw new Error(data.message);
