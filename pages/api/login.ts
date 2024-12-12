@@ -5,14 +5,16 @@ import prisma from '../../lib/prisma';
 
 // Initialize the CORS middleware
 const cors = Cors({
-  methods: ['POST', 'OPTIONS'], // Allow POST and OPTIONS methods
+  methods: ['POST', 'OPTIONS'],
   origin: [
     'https://www.vercel.app',
+    'https://trading-exchange-60ivdmgsc-seunfolas-projects.vercel.app',
   ],
+  credentials: true,
 });
 
 // Helper function to run middleware
-function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: Function) {
+async function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: Function) {
   return new Promise((resolve, reject) => {
     fn(req, res, (result: any) => {
       if (result instanceof Error) {
@@ -22,15 +24,14 @@ function runMiddleware(req: NextApiRequest, res: NextApiResponse, fn: Function) 
     });
   });
 }
-
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  // Run the CORS middleware
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   await runMiddleware(req, res, cors);
 
-  // Handle OPTIONS preflight request
-  if (req.method === 'POST') {
-    res.setHeader('Allow', 'POST, OPTIONS');
-    return res.status(204).end(); // No Content
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Origin', 'https://trading-exchange-60ivdmgsc-seunfolas-projects.vercel.app');
+    return res.status(204).end();
   }
 
   if (req.method !== 'POST') {
