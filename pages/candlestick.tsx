@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,  useCallback } from "react";
 import dynamic from "next/dynamic";
 import { FaChevronDown } from "react-icons/fa";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import debounce from "lodash/debounce";
 import { ApexOptions } from "apexcharts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUp, faArrowDown, faChartLine, faClock, faSyncAlt } from "@fortawesome/free-solid-svg-icons";
@@ -53,8 +54,10 @@ const CandlestickChart = () => {
     background: "#1f2937",
     animations: {
       enabled: true,
-      easing: "easeinout",
-      speed: 800,
+      dynamicAnimation: {
+        enabled: true,
+        speed: 800,
+      },
     },
     toolbar: {
       show: true,
@@ -114,7 +117,7 @@ const CandlestickChart = () => {
     }
   };
 
-  const fetchData = async () => {
+ const fetchData = useCallback(async () => {
     try {
       if (!selectedSymbol) return;
       const startTime = predefinedIntervals[selectedInterval]?.getTime() || dayjs().subtract(1, "month").toDate().getTime();
@@ -164,15 +167,22 @@ const CandlestickChart = () => {
       console.error("Error fetching data:", error);
       setSeries([{ data: [] }]);
     }
-  };
+  },[selectedSymbol, selectedInterval]);
 
-  useEffect(() => {
-    fetchSymbols();
-  }, []);
-
-  useEffect(() => {
+const debouncedFetchData = useCallback(
+  debounce(() => {
     fetchData();
-  }, [selectedSymbol, selectedInterval]);
+    fetchSymbols();
+  }, 500),
+  [fetchData, fetchSymbols]
+);
+
+
+useEffect(() => {
+  debouncedFetchData();
+  return () => debouncedFetchData.cancel(); // Cleanup
+}, [debouncedFetchData]);
+
 
   return (
     <div className="bg-gray-900 text-white min-h-screen p-8">

@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import dynamic from "next/dynamic";
 import { FaChevronDown } from "react-icons/fa";
+import debounce from "lodash/debounce";
+import { ApexOptions } from "apexcharts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartLine, faSyncAlt, faDownload, faSignal } from "@fortawesome/free-solid-svg-icons";
+import { faChartLine, faSyncAlt, faDownload, faSignal, faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -13,30 +15,46 @@ const Markets = () => {
   const [selectedSymbol, setSelectedSymbol] = useState<string>("BTCUSDT");
   const [series, setSeries] = useState<any[]>([{ data: [] }]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const options: ApexCharts.ApexOptions = {
+  const options: ApexOptions = {
     chart: {
       height: 450,
-      type: "candlestick" as "candlestick",
-      background: "#1e293b",
+      type: "candlestick",
+      background: "#1f2937",
       animations: {
         enabled: true,
-        easing: "easeinout",
-        speed: 800,
+        dynamicAnimation: {
+          enabled: true,
+          speed: 800,
+        },
       },
       toolbar: {
         show: true,
         tools: {
           download: true,
+          pan: true,
         },
+      },
+      zoom: {
+        enabled: true,
+        type: "x",
+        autoScaleYaxis: true,
+      },
+    },
+    title: {
+      text: "Candlestick Chart",
+      align: "center",
+      style: {
+        color: "#e5e7eb",
+        fontSize: "20px",
       },
     },
     xaxis: {
       type: "datetime",
       labels: {
         style: {
-          colors: "#94a3b8",
-          fontSize: "12px",
+          colors: "#ffffff",
         },
       },
     },
@@ -46,27 +64,18 @@ const Markets = () => {
       },
       labels: {
         style: {
-          colors: "#94a3b8",
-          fontSize: "12px",
+          colors: "#ffffff",
         },
       },
     },
     tooltip: {
       theme: "dark",
     },
-    title: {
-      text: "Market Data",
-      align: "center",
-      style: {
-        color: "#f8fafc",
-        fontSize: "20px",
-        fontWeight: "bold",
-      },
-    },
   };
 
   const fetchMarketData = async () => {
     try {
+      setLoading(true);
       const response = await fetch(
         `https://api.binance.com/api/v3/klines?symbol=${selectedSymbol}&interval=1h&limit=100`
       );
@@ -84,12 +93,22 @@ const Markets = () => {
       setSeries([{ data: formattedData }]);
     } catch (error) {
       console.error("Error fetching market data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
+  const debouncedFetchMarketData = useCallback(
+    debounce(() => {
+      fetchMarketData();
+    }, 500),
+    [selectedSymbol]
+  );
+
   useEffect(() => {
-    fetchMarketData();
-  }, [selectedSymbol]);
+    debouncedFetchMarketData();
+    return () => debouncedFetchMarketData.cancel();
+  }, [selectedSymbol, debouncedFetchMarketData]);
 
   if (!isAuthenticated) {
     return <div className="text-center text-white mt-10">Please log in to view market data.</div>;
@@ -130,12 +149,19 @@ const Markets = () => {
           <button
             onClick={fetchMarketData}
             className="flex items-center gap-2 px-6 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-transform duration-300 focus:outline-none focus:ring"
+            disabled={loading}
           >
-            <FontAwesomeIcon icon={faSyncAlt} /> Refresh Data
+            {loading ? <FontAwesomeIcon icon={faSpinner} spin /> : <FontAwesomeIcon icon={faSyncAlt} />}
+            {loading ? "Loading..." : "Refresh Data"}
           </button>
         </div>
 
         <div className="bg-gray-800 p-8 rounded-lg shadow-2xl relative">
+          {loading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
+              <FontAwesomeIcon icon={faSpinner} spin size="3x" className="text-white" />
+            </div>
+          )}
           <div className="absolute top-4 right-4 text-white flex items-center gap-2">
             <FontAwesomeIcon icon={faDownload} /> Download Data
           </div>
