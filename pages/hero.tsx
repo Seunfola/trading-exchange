@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const Hero = () => {
   const router = useRouter();
@@ -21,7 +22,7 @@ const Hero = () => {
         <div className="absolute top-0 left-0 w-full h-full bg-gray-300 animate-pulse"></div>
       )}
 
-      <img
+      <Image
         src="image.png"
         alt="Background"
         className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-500 ${
