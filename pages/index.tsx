@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import OrderForm from '../components/OrderForm';
 import Login from './login';
 import Signup from './signup';
 import { useAuth } from '../context/AuthContext';
-import CandlestickChart from './candlestick';
+
 import Hero from './hero';
 import Feature from './feature';
 import ContactUs from './contactus';

@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import Login from './login';
+import Signup from './signup';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faWallet,
@@ -7,11 +9,15 @@ import {
   faSpinner,
   faCopy,
 } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from '../context/AuthContext';
+
 
 const CreateWallet = () => {
   const [step, setStep] = useState<"select" | "loading" | "result">("select");
   const [useThirdParty, setUseThirdParty] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
+  const { isAuthenticated } = useAuth();
+  const [showLogin, setShowLogin] = useState(true);
   const [walletData, setWalletData] = useState({ address: "", message: "" });
 
   const handleCreateWallet = async () => {
@@ -66,6 +72,12 @@ const CreateWallet = () => {
 
 
   return (
+    <>
+     {!isAuthenticated ? (
+        <div className="flex flex-col items-center">
+          {showLogin ? <Login /> : <Signup />}
+        </div>
+      ) : (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-400 via-blue-500 to-indigo-700 p-6">
       <div className="bg-white text-gray-800 p-8 rounded-xl shadow-xl w-full max-w-lg">
         {/* Step: Select Method */}
@@ -164,6 +176,9 @@ const CreateWallet = () => {
         )}
       </div>
     </div>
+    )}
+   </>
+
   );
 };
 

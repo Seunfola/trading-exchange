@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import "@fortawesome/fontawesome-free/css/all.css";
-import TermsOfService from "./../pages/terms-of-service";
+import Image from "next/image";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,7 +14,7 @@ const Header = () => {
     <header className="bg-gray-800 text-white px-4 py-6 md:py-6 md:px-4">
       <div className="container mx-auto flex items-center justify-between">
         <Link href="/" className="flex items-center space-x-4">
-          <img src="/logo.svg" alt="ForM Exchange Logo" className="w-10 h-10" />
+          <Image src="/logo.svg" alt="ForM Exchange Logo" className="w-10 h-10" />
           <div className="logo text-lg font-bold">ForM Exchange</div>
         </Link>
 
@@ -31,20 +31,20 @@ const Header = () => {
           }`}
         >
           <nav className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 text-center md:text-left">
-            <Link href="/" legacyBehavior>
-              <a className="hover:text-green-500">Home</a>
+            <Link href="/" className="hover:text-green-500">
+          Home
             </Link>
-            <Link href="/profile" legacyBehavior>
-              <a className="hover:text-green-500">Wallet</a>
+            <Link href="/profile" className="hover:text-green-500">
+            Wallet
             </Link>
-            <Link href="/markets" legacyBehavior>
-              <a className="hover:text-green-500">Markets</a>
+            <Link href="/markets" className="hover:text-green-500">
+              Market
             </Link>
-            <Link href="/contactus" legacyBehavior>
-              <a className="hover:text-green-500">contact</a>
+            <Link href="/contactus" className="hover:text-green-500" >
+             Contact
             </Link>
-            <Link href="/terms-of-service" legacyBehavior>
-              <a className="hover:text-green-500">Terms </a>
+            <Link href="/profile" className="hover:text-green-500" >
+              profile 
             </Link>
           </nav>
 
