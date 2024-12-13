@@ -45,8 +45,8 @@ const Header = () => {
             <Link href="/markets" className="hover:text-green-500">
               Market
             </Link>
-            <Link href="/contactus" className="hover:text-green-500" >
-             Contact
+            <Link href="/deposit" className="hover:text-green-500" >
+             Deposite
             </Link>
             <Link href="/profile" className="hover:text-green-500" >
               profile 

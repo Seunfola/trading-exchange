@@ -24,7 +24,10 @@ const CreateWallet = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ useThirdParty: type === "third-party" }),
+        body: JSON.stringify({
+        userId: 123, // Replace with the actual user ID
+        useThirdParty: false,
+      }),
       });
 
       if (!response.ok) throw new Error("Error creating wallet");
