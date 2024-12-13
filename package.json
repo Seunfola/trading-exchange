@@ -41,6 +41,7 @@
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.395.0",
     "md5": "^2.3.0",
+    "mpp-sdk": "^0.7.2",
     "next": "^14.2.4",
     "next-iron-session": "^4.2.0",
     "next-session": "^4.0.5",

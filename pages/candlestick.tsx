@@ -47,52 +47,59 @@ const CandlestickChart = () => {
   });
 
   const options: ApexOptions = {
-    chart: {
-      height: 450,
-      type: "candlestick",
-      background: "#1f2937",
-      animations: {
-        enabled: true,
-        easing: "easeinout",
-        speed: 800,
-      },
-      toolbar: {
-        show: true,
-        tools: {
-          download: true,
-        },
+  chart: {
+    height: 450,
+    type: "candlestick",
+    background: "#1f2937",
+    animations: {
+      enabled: true,
+      easing: "easeinout",
+      speed: 800,
+    },
+    toolbar: {
+      show: true,
+      tools: {
+        download: true,
+        pan: true,
       },
     },
-    title: {
-      text: "Futuristic Candlestick Chart",
-      align: "center",
+    zoom: {
+      enabled: true,
+      type: "x",
+      autoScaleYaxis: true,
+    },
+  },
+  title: {
+    text: "Candlestick Chart",
+    align: "center",
+    style: {
+      color: "#e5e7eb",
+      fontSize: "20px",
+    },
+  },
+  xaxis: {
+    type: "datetime",
+    labels: {
       style: {
-        color: "#e5e7eb",
-        fontSize: "20px",
+        colors: "#ffffff",
       },
     },
-    xaxis: {
-      type: "datetime",
-      labels: {
-        style: {
-          colors: "#a0aec0",
-        },
-      },
-    },
-    yaxis: {
-      tooltip: {
-        enabled: true,
-      },
-      labels: {
-        style: {
-          colors: "#a0aec0",
-        },
-      },
-    },
+  },
+  yaxis: {
     tooltip: {
-      theme: "dark",
+      enabled: true,
     },
-  };
+    labels: {
+      style: {
+        colors: "#ffffff",
+      },
+    },
+  },
+  tooltip: {
+    theme: "dark",
+  },
+};
+
 
   const fetchSymbols = async () => {
     try {

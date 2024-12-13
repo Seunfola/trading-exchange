@@ -97,7 +97,7 @@ const Markets = () => {
 
   return (
     <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 min-h-screen">
-      <main className="container mx-auto px-4 sm:px-8 py-10">
+      <div className="container mx-auto px-4 sm:px-8 py-10">
         <h1 className="text-5xl text-white text-center font-extrabold mb-10 flex justify-center items-center gap-4">
           <FontAwesomeIcon icon={faChartLine} /> Real-Time Market Data
         </h1>
@@ -146,7 +146,7 @@ const Markets = () => {
           <FontAwesomeIcon icon={faSignal} size="2x" className="text-green-500" />
           <p className="text-lg">Live data fetched directly from Binance</p>
         </div>
-      </main>
+      </div>
     </div>
   );
 };
