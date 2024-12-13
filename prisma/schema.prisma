@@ -1,10 +1,10 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "cockroachdb"
   url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 model Widget {
@@ -12,7 +12,7 @@ model Widget {
 }
 
 model TradingPair {
-  id    Int      @id @default(sequence())
+  id    Int      @id @default(sequence(maxValue: 2147483647))
   date  DateTime
   open  Float
   high  Float
@@ -28,40 +28,40 @@ model Market {
 }
 
 model OrderBook {
-  id          Int      @id @default(sequence())
+  id          Int      @id @default(sequence(maxValue: 2147483647))
   symbol      String
   bidPrice    Float
   askPrice    Float
   bidQuantity Float
   askQuantity Float
   userId      Int
-  user        User     @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
 }
 
 model Deposit {
-  id        Int      @id @default(sequence())
+  id        Int      @id @default(sequence(maxValue: 2147483647))
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
   walletId  Int
-  wallet    Wallet   @relation(fields: [walletId], references: [id])
   amount    Float
   currency  String   @default("ETH")
-  status    String   @default("PENDING") // PENDING, COMPLETED, FAILED
+  status    String   @default("PENDING")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  wallet    Wallet   @relation(fields: [walletId], references: [id])
 }
 
 model Wallet {
   id        Int       @id @default(sequence())
-  balance   Float     @default(0.0)
   currency  String    @default("ETH")
+  balance   Float     @default(0.0)
   userId    Int
-  user      User      @relation(fields: [userId], references: [id])
-  deposits  Deposit[] // Relation to the Deposit model
-  address   String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  address   String
+  deposits  Deposit[]
+  user      User      @relation(fields: [userId], references: [id])
 }
 
 model User {
@@ -69,10 +69,10 @@ model User {
   username  String      @unique
   email     String      @unique
   password  String
-  Wallets   Wallet[]
-  deposits  Deposit[] // Relation to the Deposit model
   createdAt DateTime    @default(now())
+  deposits  Deposit[]
   OrderBook OrderBook[]
+  Wallets   Wallet[]
 
   @@index([email])
 }

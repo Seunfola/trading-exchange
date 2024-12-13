@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const userId = req.userId; // Provided by authMiddleware
+    const userId = req.userId; 
 
     if (!userId || typeof userId !== "number") {
       return res.status(401).json({ message: "Unauthorized: User ID is invalid or missing" });

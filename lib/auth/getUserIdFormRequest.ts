@@ -1,17 +1,32 @@
-import jwt from 'jsonwebtoken';
-import { NextApiRequest } from 'next';
+import jwt from "jsonwebtoken";
+import { NextApiRequest } from "next";
 
 const getUserIdFromRequest = (req: NextApiRequest): number | null => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return null;
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    console.error("Missing Authorization header");
+    return null;
+  }
+
+  const tokenParts = authHeader.split(" ");
+  if (tokenParts.length !== 2 || tokenParts[0] !== "Bearer") {
+    console.error("Malformed Authorization header");
+    return null;
+  }
+
+  const token = tokenParts[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { userId: string | number };
-    const userId = Number(decoded.userId); // Ensure the userId is a number
-    if (isNaN(userId)) return null; // Return null if userId is not a valid number
-    return userId;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { userId: number };
+    return decoded.userId || null;
   } catch (error) {
-    console.error('Invalid token:', error);
+    if (error instanceof Error) {
+      // Narrow the error type to access `message`
+      console.error("JWT Verification Error:", error.message);
+    } else {
+      console.error("JWT Verification Error: Unknown error occurred");
+    }
     return null;
   }
 };
