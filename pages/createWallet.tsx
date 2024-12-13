@@ -1,183 +1,139 @@
 import React, { useState } from "react";
-import Login from './login';
-import Signup from './signup';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faWallet,
-  faCheckCircle,
-  faTimesCircle,
-  faSpinner,
-  faCopy,
+  faPlus,
+  faLink,
+  faCircleNotch,
 } from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from '../context/AuthContext';
-
 
 const CreateWallet = () => {
-  const [step, setStep] = useState<"select" | "loading" | "result">("select");
+  const [activeTab, setActiveTab] = useState<"link" | "create">("link");
   const [useThirdParty, setUseThirdParty] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState("");
-  const { isAuthenticated } = useAuth();
-  const [showLogin, setShowLogin] = useState(true);
-  const [walletData, setWalletData] = useState({ address: "", message: "" });
+  const [loading, setLoading] = useState(false);
+  const [walletData, setWalletData] = useState<{ address: string; message: string }>({
+    address: "",
+    message: "",
+  });
 
-  const handleCreateWallet = async () => {
-  setStep("loading");
-  setLoadingMessage(
-    useThirdParty ? "Contacting third-party service..." : "Creating your custom wallet..."
-  );
+  const handleCreateWallet = async (type: "custom" | "third-party") => {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/createWallet", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ useThirdParty: type === "third-party" }),
+      });
 
-  try {
-    const response = await fetch("/api/createWallet", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`, 
-      },
-      body: JSON.stringify({ useThirdParty }),
-    });
+      if (!response.ok) throw new Error("Error creating wallet");
 
-    if (response.status === 401) {
-      window.location.href = "/login";
-      return;
+      const data = await response.json();
+      setWalletData({
+        address: data.address || "",
+        message: data.message || "Wallet created successfully!",
+      });
+    } catch (error) {
+      setWalletData({
+        address: "",
+        message: (error as Error).message || "Failed to create wallet.",
+      });
+    } finally {
+      setLoading(false);
     }
-
-    if (response.redirected) {
-      console.log("Redirecting to:", response.url);
-      setLoadingMessage("Redirecting to third-party service...");
-      window.location.href = response.url;
-      return;
-    }
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Error creating wallet");
-    }
-
-    const responseData = await response.json();
-    setWalletData({
-      address: responseData.address || "",
-      message: responseData.message || "Wallet created successfully!",
-    });
-    setStep("result");
-  } catch (error) {
-    console.error("Error during wallet creation:", error);
-    setWalletData({
-      address: "",
-      message: (error as Error).message || "Error creating wallet",
-    });
-    setStep("result");
-  }
-};
-
+  };
 
   return (
-    <>
-     {!isAuthenticated ? (
-        <div className="flex flex-col items-center">
-          {showLogin ? <Login /> : <Signup />}
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-black to-gray-900 text-white flex items-center justify-center p-6">
+      <div className="bg-gray-800 rounded-3xl shadow-2xl w-full max-w-3xl p-8">
+        {/* Tab Navigation */}
+        <div className="flex justify-center gap-8 mb-6">
+          <button
+            onClick={() => setActiveTab("link")}
+            className={`px-6 py-3 text-lg font-bold rounded-lg transition ${
+              activeTab === "link"
+                ? "bg-blue-500 text-white shadow-md"
+                : "bg-gray-700 hover:bg-gray-600"
+            }`}
+          >
+            <FontAwesomeIcon icon={faLink} className="mr-2" />
+            Link Wallet
+          </button>
+          <button
+            onClick={() => setActiveTab("create")}
+            className={`px-6 py-3 text-lg font-bold rounded-lg transition ${
+              activeTab === "create"
+                ? "bg-green-500 text-white shadow-md"
+                : "bg-gray-700 hover:bg-gray-600"
+            }`}
+          >
+            <FontAwesomeIcon icon={faPlus} className="mr-2" />
+            Create Wallet
+          </button>
         </div>
-      ) : (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-400 via-blue-500 to-indigo-700 p-6">
-      <div className="bg-white text-gray-800 p-8 rounded-xl shadow-xl w-full max-w-lg">
-        {/* Step: Select Method */}
-        {step === "select" && (
-          <div className="text-center space-y-6">
-            <FontAwesomeIcon
-              icon={faWallet}
-              className="text-indigo-500 text-5xl mb-4 animate-bounce"
-            />
-            <h2 className="text-3xl font-bold text-gray-800">Create Your Wallet</h2>
-            <p className="text-gray-600">
-              Choose how you want to create your wallet. Select our secure custom service or a
-              third-party service.
-            </p>
-            <div className="grid gap-4 mt-6">
-              <button
-                onClick={() => {
-                  setUseThirdParty(false);
-                  handleCreateWallet();
-                }}
-                className="relative flex items-center justify-center gap-2 py-3 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition duration-300 group"
-              >
-                <FontAwesomeIcon
-                  icon={faWallet}
-                  className="absolute left-4 group-hover:rotate-12 transition-transform"
-                />
-                Custom Wallet
-              </button>
-              <button
-                onClick={() => {
-                  setUseThirdParty(true);
-                  handleCreateWallet();
-                }}
-                className="relative flex items-center justify-center gap-2 py-3 px-6 bg-gradient-to-r from-gray-600 to-gray-800 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition duration-300 group"
-              >
-                <FontAwesomeIcon
-                  icon={faWallet}
-                  className="absolute left-4 group-hover:rotate-12 transition-transform"
-                />
-                Third-Party Wallet
+
+        {/* Tab Content */}
+        <div>
+          {activeTab === "link" && (
+            <div className="text-center">
+              <FontAwesomeIcon icon={faLink} className="text-blue-400 text-5xl mb-4" />
+              <h2 className="text-2xl font-bold mb-4">Link Your Wallet</h2>
+              <p className="text-gray-400 mb-6">Securely connect your wallet to manage transactions.</p>
+              <button className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-500 transition">
+                Connect Wallet
               </button>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Step: Loading */}
-        {step === "loading" && (
-          <div className="text-center space-y-4">
-            <FontAwesomeIcon icon={faSpinner} spin className="text-indigo-500 text-5xl" />
-            <p className="text-gray-600">{loadingMessage}</p>
-            <div className="w-full bg-gray-200 rounded-full h-2.5 mt-4">
-              <div
-                className="bg-indigo-500 h-2.5 rounded-full animate-pulse"
-                style={{ width: "75%" }}
-              ></div>
-            </div>
-          </div>
-        )}
-
-        {/* Step: Result */}
-        {step === "result" && (
-          <div className="text-center space-y-6">
-            {walletData.address ? (
-              <>
-                <FontAwesomeIcon
-                  icon={faCheckCircle}
-                  className="text-green-500 text-5xl mb-4"
-                />
-                <h2 className="text-2xl font-bold text-gray-800">Wallet Created Successfully!</h2>
-                <p className="text-gray-600">
-                  Your wallet address:
-                  <span className="block font-mono text-indigo-500 mt-2">{walletData.address}</span>
+          {activeTab === "create" && (
+            <div>
+              <div className="text-center mb-6">
+                <FontAwesomeIcon icon={faPlus} className="text-green-400 text-5xl mb-4" />
+                <h2 className="text-2xl font-bold mb-4">Create a New Wallet</h2>
+                <p className="text-gray-400">
+                  Choose between a custom wallet or a third-party service.
                 </p>
+              </div>
+
+              {/* Wallet Options */}
+              <div className="grid gap-4 sm:grid-cols-2">
                 <button
-                  onClick={() => navigator.clipboard.writeText(walletData.address)}
-                  className="flex items-center justify-center gap-2 py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:bg-indigo-700 transition"
+                  onClick={() => handleCreateWallet("custom")}
+                  className="bg-green-600 p-6 rounded-lg shadow-lg hover:bg-green-500 transition flex flex-col items-center text-center"
+                  disabled={loading}
                 >
-                  <FontAwesomeIcon icon={faCopy} />
-                  Copy Address
+                  {loading ? (
+                    <FontAwesomeIcon icon={faCircleNotch} spin className="text-white text-3xl" />
+                  ) : (
+                    <>
+                      <FontAwesomeIcon icon={faWallet} className="text-4xl mb-3" />
+                      <h3 className="text-lg font-bold">Custom Wallet</h3>
+                      <p className="text-sm text-gray-300">Create a secure wallet with us.</p>
+                    </>
+                  )}
                 </button>
-              </>
-            ) : (
-              <>
-                <FontAwesomeIcon icon={faTimesCircle} className="text-red-500 text-5xl" />
-                <h2 className="text-2xl font-bold text-gray-800">Error Creating Wallet</h2>
-                <p className="text-gray-600">{walletData.message}</p>
-              </>
-            )}
-            <button
-              onClick={() => setStep("select")}
-              className="flex items-center justify-center gap-2 py-3 px-6 bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition"
-            >
-              Try Again
-            </button>
-          </div>
-        )}
+                <button
+                  onClick={() => handleCreateWallet("third-party")}
+                  className="bg-gray-700 p-6 rounded-lg shadow-lg hover:bg-gray-600 transition flex flex-col items-center text-center"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <FontAwesomeIcon icon={faCircleNotch} spin className="text-white text-3xl" />
+                  ) : (
+                    <>
+                      <FontAwesomeIcon icon={faWallet} className="text-4xl mb-3" />
+                      <h3 className="text-lg font-bold">Third-Party Wallet</h3>
+                      <p className="text-sm text-gray-300">Use a third-party service to create.</p>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
-    )}
-   </>
-
   );
 };
 

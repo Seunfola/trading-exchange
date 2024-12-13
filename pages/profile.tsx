@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "../context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faWallet, faEye, faEyeSlash, faSignOutAlt, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash, faSignOutAlt, faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 interface User {
   id: number;
@@ -25,7 +25,7 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
 const fetchUserDetails = async () => {
-  const userId = localStorage.getItem("userId"); // Retrieve userId from localStorage
+  const userId = localStorage.getItem("userId"); 
 
   if (!userId) {
     console.error("User ID not found in localStorage");
@@ -48,7 +48,8 @@ const fetchUserDetails = async () => {
     }
 
     const data = await response.json();
-    setUser(data.user); // Update user state with fetched data
+    setUser(data.user); 
+
   } catch (error) {
     console.error("Error fetching user details:", error);
     router.push("/login?redirect=profile");
@@ -56,8 +57,7 @@ const fetchUserDetails = async () => {
 };
 
 
-
-    fetchUserDetails();
+   fetchUserDetails();
   }, [isAuthenticated, logout, router]);
 
   if (!isAuthenticated || !user) {
@@ -88,7 +88,6 @@ const fetchUserDetails = async () => {
           </button>
         </div>
 
-        {/* User Information */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-gray-100 p-6 rounded-lg shadow">
             <h2 className="text-xl font-semibold text-gray-800">Account Details</h2>
