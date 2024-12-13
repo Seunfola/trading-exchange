@@ -14,7 +14,12 @@ const Header = () => {
     <header className="bg-gray-800 text-white px-4 py-6 md:py-6 md:px-4">
       <div className="container mx-auto flex items-center justify-between">
         <Link href="/" className="flex items-center space-x-4">
-          <Image src="/logo.svg" alt="ForM Exchange Logo" className="w-10 h-10" />
+          <Image 
+          src="/logo.svg"
+           alt="ForM Exchange Logo" 
+           width={50}
+           height={50}
+           className="w-10 h-10" />
           <div className="logo text-lg font-bold">ForM Exchange</div>
         </Link>
 

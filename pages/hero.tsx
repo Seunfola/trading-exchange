@@ -23,8 +23,10 @@ const Hero = () => {
       )}
 
       <Image
-        src="image.png"
+        src="/image.png"
         alt="Background"
+          width={1020} 
+          height={700}
         className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-500 ${
           isLoaded ? "opacity-100" : "opacity-0"
         }`}
