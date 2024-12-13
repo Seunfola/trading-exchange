@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 import prisma from "../../lib/prisma";
 import jwt from "jsonwebtoken";
 
-// Use your actual secret key from environment variables
 const secretKey = process.env.JWT_SECRET;
 
 const cors = Cors({
@@ -40,7 +39,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(401).json({ success: false, message: "Invalid email or password" });
     }
 
-    // Create a JWT token with user details
     const token = jwt.sign(
       { userId: user.id, username: user.username, email: user.email },
       secretKey!,

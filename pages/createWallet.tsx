@@ -37,7 +37,6 @@ const CreateWallet = () => {
     });
 
     if (response.status === 401) {
-      // Redirect to login if unauthorized
       window.location.href = "/login";
       return;
     }

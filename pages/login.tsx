@@ -12,7 +12,6 @@ const Login: React.FC = () => {
 
   const router = useRouter();
   const { login } = useAuth();
-  const { redirect } = router.query;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,8 +33,7 @@ const Login: React.FC = () => {
       localStorage.setItem("token", data.token); // Store token
       localStorage.setItem("userId", data.userId);  
         login();
-      const redirect = router.query.redirect as string;
-      router.push(redirect || "/");      } else {
+      router.push( "/");      } else {
         throw new Error(data.message);
       }
 

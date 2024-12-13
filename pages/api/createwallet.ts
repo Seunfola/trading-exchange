@@ -38,7 +38,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.redirect(307, thirdPartyWalletCreationUrl);
     }
 
-    // Custom wallet creation via Infura
     const walletDetails = await createInfuraWallet(userId, infuraUrl, privateKey);
     console.log(`Wallet created for userId: ${userId}, address: ${walletDetails.address}`);
     return res.status(201).json(walletDetails);
