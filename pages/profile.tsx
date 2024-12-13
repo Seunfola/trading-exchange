@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faWallet, faSignOutAlt, faCogs, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faWallet, faSignOutAlt, faCogs, faSpinner, faEyeSlash , faEye } from "@fortawesome/free-solid-svg-icons";
 
 interface Wallet {
   address: string;
