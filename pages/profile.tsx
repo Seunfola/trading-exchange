@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faWallet, faSignOutAlt, faCogs, faSpinner, faEyeSlash , faEye } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUser,
+  faWallet,
+  faSignOutAlt,
+  faCogs,
+  faSpinner,
+  faCopy,
+  faCheck,
+  faEyeSlash,
+  faEye,
+} from "@fortawesome/free-solid-svg-icons";
 
 interface Wallet {
   address: string;
@@ -23,6 +33,7 @@ const Profile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"account" | "wallet" | "settings">("account");
   const [walletVisible, setWalletVisible] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -62,6 +73,14 @@ const Profile: React.FC = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
     router.push("/login");
+  };
+
+  const handleCopyUserId = () => {
+    if (user?.id) {
+      navigator.clipboard.writeText(user.id.toString());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   if (loading) {
@@ -114,45 +133,69 @@ const Profile: React.FC = () => {
           {activeTab === "account" && (
             <div className="bg-gray-800 rounded-lg p-6">
               <h2 className="text-xl font-semibold text-blue-300">Account Details</h2>
-              <p className="text-gray-300 mt-2">
-                <strong>Username:</strong> {user?.username}
+              <p className="text-gray-300 mt-3">
+                <strong className="mr-9">User ID:</strong> {user?.id}{" "}
+                <button
+                  onClick={handleCopyUserId}
+                  className="ml-2 text-white hover:text-blue-600 transition"
+                >
+                  <FontAwesomeIcon icon={copied ? faCheck : faCopy} />
+                  <span className="ml-1">
+                    {copied ? "Copied!" : "Copy"}
+                    </span>
+                </button>
               </p>
               <p className="text-gray-300">
-                <strong>Email:</strong> {user?.email}
+                <strong className="mr-4">Username:</strong> {user?.username}
               </p>
               <p className="text-gray-300">
-                <strong>Joined:</strong> {new Date(user?.createdAt || "").toLocaleDateString()}
+                <strong className="mr-12">Email:</strong> {user?.email}
+              </p>
+              <p className="text-gray-300">
+                <strong className="mr-7">Created:</strong> {new Date(user?.createdAt || "").toLocaleDateString()}
               </p>
             </div>
           )}
 
           {activeTab === "wallet" && (
             <div className="bg-gray-800 rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-blue-300">Wallet Information</h2>
-              {user?.wallets && user.wallets.length > 0 ? (
-                user.wallets.map((wallet, index) => (
-                  <div key={index} className="mt-4">
-                    <p className="text-gray-300">
-                      <strong>Wallet Address:</strong>{" "}
-                      <span className="font-mono">
-                        {walletVisible ? wallet.address : "***************"}
-                      </span>
-                      <button
-                        onClick={() => setWalletVisible(!walletVisible)}
-                        className="ml-2 text-blue-400 hover:text-blue-600 transition"
-                      >
-                        <FontAwesomeIcon icon={walletVisible ? faEyeSlash : faEye} />
-                      </button>
-                    </p>
-                    <p className="text-gray-300">
-                      <strong>Balance:</strong> {wallet.balance.toFixed(2)} {wallet.currency}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-400 mt-4">No wallets linked yet.</p>
-              )}
-            </div>
+  <div className="flex justify-between items-center mb-4">
+    <h2 className="text-xl font-semibold text-blue-300">Wallet Information</h2>
+    <button
+      onClick={() => {
+        router.push("/createWallet")
+      }}
+      className="flex items-center bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 transition-transform transform hover:scale-105"
+    >
+      <FontAwesomeIcon icon={faWallet} className="mr-2" />
+      Create Wallet
+    </button>
+  </div>
+  {user?.wallets && user.wallets.length > 0 ? (
+    user.wallets.map((wallet, index) => (
+      <div key={index} className="mt-4">
+        <p className="text-gray-300">
+          <strong>Wallet Address:</strong>{" "}
+          <span className="font-mono">
+            {walletVisible ? wallet.address : "***************"}
+          </span>
+          <button
+            onClick={() => setWalletVisible(!walletVisible)}
+            className="ml-2 text-blue-400 hover:text-blue-600 transition"
+          >
+            <FontAwesomeIcon icon={walletVisible ? faEyeSlash : faEye} />
+          </button>
+        </p>
+        <p className="text-gray-300">
+          <strong>Balance:</strong> {wallet.balance.toFixed(2)} {wallet.currency}
+        </p>
+      </div>
+    ))
+  ) : (
+    <p className="text-gray-400 mt-4">No wallets linked yet.</p>
+  )}
+</div>
+
           )}
 
           {activeTab === "settings" && (

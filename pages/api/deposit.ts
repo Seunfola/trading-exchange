@@ -1,64 +1,73 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../lib/prisma";
 
-const prisma = new PrismaClient();
-
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
-  }
-
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
+    if (req.method !== "POST") {
+      return res.status(405).json({ message: "Method Not Allowed" });
+    }
+
     const { userId, walletId, amount, currency = "ETH" } = req.body;
 
-    if (!userId || !walletId || !amount) {
-      return res.status(400).json({ message: "User ID, Wallet ID, and amount are required" });
+    // Validate request body parameters
+    if (!userId || typeof userId !== "number") {
+      return res.status(400).json({ message: "Invalid or missing User ID" });
+    }
+    if (!walletId || typeof walletId !== "number") {
+      return res.status(400).json({ message: "Invalid or missing Wallet ID" });
+    }
+    if (!amount || typeof amount !== "number" || amount <= 0) {
+      return res.status(400).json({ message: "Invalid or missing deposit amount" });
     }
 
-    if (amount <= 0) {
-      return res.status(400).json({ message: "Deposit amount must be greater than zero" });
-    }
-
-    // Find the wallet
+    // Find the wallet associated with the walletId
     const wallet = await prisma.wallet.findUnique({
       where: { id: walletId },
+      select: {
+        id: true,
+        balance: true,
+        userId: true,
+      },
     });
 
     if (!wallet) {
       return res.status(404).json({ message: "Wallet not found" });
     }
 
+    // Verify that the wallet belongs to the user
+    if (wallet.userId !== userId) {
+      return res.status(403).json({ message: "Unauthorized action" });
+    }
+
     // Log the deposit in the Deposit model
     const deposit = await prisma.deposit.create({
       data: {
-        userId: Number(userId),
-        walletId: Number(walletId),
-        amount: Number(amount),
+        userId,
+        walletId,
+        amount,
         currency,
-        status: "COMPLETED", // In a real scenario, you might set this to "PENDING" initially
+        status: "COMPLETED",
       },
     });
 
-    // Update the wallet balance
+    // Update the wallet's balance
     const updatedWallet = await prisma.wallet.update({
       where: { id: walletId },
       data: {
-        balance: { increment: Number(amount) },
+        balance: {
+          increment: amount,
+        },
       },
     });
 
-    res.status(200).json({
+    // Respond with success and updated balance
+    return res.status(200).json({
       message: "Deposit successful",
       deposit,
       updatedBalance: updatedWallet.balance,
     });
   } catch (error) {
     console.error("Error processing deposit:", error);
-    res.status(500).json({
-      error: "Error processing deposit",
-      details: error instanceof Error ? error.message : "Unknown error",
-    });
+    return res.status(500).json({ message: "Internal server error" });
   }
-};
-
-export default handler;
+}

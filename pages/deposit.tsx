@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -6,33 +6,48 @@ import {
   faCheckCircle,
   faTimesCircle,
   faWallet,
+  faCopy,
 } from "@fortawesome/free-solid-svg-icons";
 
-const Deposit: React.FC = () => {
+const Deposit = () => {
+  const [userId, setUserId] = useState("");
+  const [walletId, setWalletId] = useState("");
   const [amount, setAmount] = useState("");
+  const [currency, setCurrency] = useState("ETH");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const router = useRouter();
 
-  const validateAmount = (): boolean => {
-    const value = parseFloat(amount);
-    return !isNaN(value) && value > 0;
+  const validateForm = (): boolean => {
+    const amountValue = parseFloat(amount);
+    return (
+      userId.trim() !== "" &&
+      walletId.trim() !== "" &&
+      !isNaN(amountValue) &&
+      amountValue > 0
+    );
   };
 
   const handleDeposit = async () => {
-    if (!validateAmount()) {
-      setError("Please enter a valid amount.");
+    if (!validateForm()) {
+      setError("Please fill all fields with valid data.");
       return;
     }
 
     setLoading(true);
     setError(null);
     setSuccess(null);
+
     try {
       const response = await fetch("/api/deposit", {
         method: "POST",
-        body: JSON.stringify({ amount: parseFloat(amount) }),
+        body: JSON.stringify({
+          userId: parseInt(userId),
+          walletId: parseInt(walletId),
+          amount: parseFloat(amount),
+          currency,
+        }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -44,7 +59,10 @@ const Deposit: React.FC = () => {
 
       const data = await response.json();
       setSuccess("Deposit processed successfully!");
+      setUserId("");
+      setWalletId("");
       setAmount("");
+      setCurrency("ETH");
       console.log("Deposit processed", data);
     } catch (error) {
       setError((error as Error).message || "Error processing deposit");
@@ -67,17 +85,60 @@ const Deposit: React.FC = () => {
           <p className="text-gray-500">Add funds to your wallet securely</p>
         </div>
 
-        <div className="mt-8">
-          <label className="block text-sm font-medium text-gray-600 mb-2">
-            Enter Amount
-          </label>
-          <input
-            type="text"
-            className="block w-full bg-gray-100 text-gray-800 py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm placeholder-gray-400"
-            placeholder="Enter amount (e.g., 100)"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
+        <div className="mt-8 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              User ID
+              <span className="text-red-600 ml-1">*</span>
+              <span className="text-gray-500 text-xs ml-2">
+                (Copy your user ID from your profile )
+                <FontAwesomeIcon icon={faCopy} spin className="mr-2 px-2" />
+              </span>
+            </label>
+            <input
+              type="text"
+              className="block w-full bg-gray-100 text-gray-800 py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm placeholder-gray-400"
+              placeholder="Enter your User ID"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Wallet ID
+            </label>
+            <input
+              type="text"
+              className="block w-full bg-gray-100 text-gray-800 py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm placeholder-gray-400"
+              placeholder="Enter your Wallet ID"
+              value={walletId}
+              onChange={(e) => setWalletId(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Amount
+            </label>
+            <input
+              type="text"
+              className="block w-full bg-gray-100 text-gray-800 py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm placeholder-gray-400"
+              placeholder="Enter deposit amount (e.g., 100)"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Currency
+            </label>
+            <input
+              type="text"
+              className="block w-full bg-gray-100 text-gray-800 py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm placeholder-gray-400"
+              placeholder="Enter currency (default: ETH)"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+            />
+          </div>
         </div>
 
         <button
@@ -98,17 +159,6 @@ const Deposit: React.FC = () => {
             "Deposit"
           )}
         </button>
-
-        {loading && (
-          <div className="text-center text-gray-700 mt-4">
-            <FontAwesomeIcon
-              icon={faSpinner}
-              spin
-              className="text-indigo-500 text-3xl"
-            />
-            <p className="mt-2">Processing your deposit...</p>
-          </div>
-        )}
 
         {error && (
           <div className="flex items-center gap-2 mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
