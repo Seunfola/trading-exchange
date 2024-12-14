@@ -31,7 +31,7 @@ const user = await prisma.user.findUnique({
         },
       },
     });
-
+  console.log('Fetched User Data:', user);
     // Handle case where user is not found
     if (!user) {
       return res.status(404).json({ message: "User not found" });

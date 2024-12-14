@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faWallet,
   faPlus,
+  faCopy,
   faLink,
   faCircleNotch,
   faEye,
@@ -20,8 +21,9 @@ const CreateWallet = () => {
   const [walletData, setWalletData] = useState<{
     address: string;
     message: string;
+    balance: number;
     seedPhrase?: string;
-  }>({ address: "", message: "" });
+  }>({ address: "", message: "", balance:0.0 });
   const [error, setError] = useState<string | null>(null);
   const [showSeedPhrase, setShowSeedPhrase] = useState(false);
 
@@ -44,7 +46,7 @@ const CreateWallet = () => {
   const handleCreateWallet = async (type: "custom" | "third-party") => {
     setLoading(true);
     setError(null);
-    setWalletData({ address: "", message: "" });
+    setWalletData({ address: "", message: "",balance:0.0 });
 
 
     try {
@@ -73,8 +75,10 @@ const CreateWallet = () => {
 
       setWalletData({
         address: data.address,
-        message: "Wallet created successfully!",
         seedPhrase: data.seedPhrase,
+        balance: data.balance || 0,
+        message: "Wallet created successfully!",
+
       });
 
     } catch (error) {
@@ -82,6 +86,12 @@ const CreateWallet = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      alert("Copied to clipboard!");
+    });
   };
 
   const handleDownloadSeedPhrase = () => {
@@ -192,8 +202,22 @@ const CreateWallet = () => {
               {/* Success Message */}
               {walletData.address && (
                 <div className="mt-6 text-center text-green-400">
-                  <p className="font-bold">{walletData.message}</p>
-                  <p className="break-all">{walletData.address}</p>
+                  <p className="font-bold mb-2">
+                    <strong>
+                      ETH Balance: {""}
+                      </strong>
+                      {walletData.balance}
+                      </p>
+                  <p className="break-all mb-2">
+                    <strong>
+                      Wallet Address: {""}
+                    </strong>
+                    {walletData.address}
+                    </p>
+                  <p className="font-bold">
+                    
+                    {walletData.message}
+                    </p>
                 </div>
               )}
 
@@ -210,8 +234,11 @@ const CreateWallet = () => {
                       {walletData.seedPhrase}
                     </p>
                     <button
-                      onClick={() => setShowSeedPhrase(!showSeedPhrase)}
-                      className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-400"
+                      onClick={() => {
+      navigator.clipboard.writeText(walletData.seedPhrase || "");
+      alert("Seed Phrase copied to clipboard!");
+    }}
+    className="mt-4 px-6 py-3 bg-green-600 text-white rounded-lg shadow-lg hover:bg-green-500 transition"
                     >
                       <FontAwesomeIcon icon={showSeedPhrase ? faEyeSlash : faEye} />
                     </button>

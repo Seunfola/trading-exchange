@@ -46,9 +46,9 @@ const Header = () => {
               Market
             </Link>
             <Link href="/deposit" className="hover:text-green-500" >
-             Deposite
+             Deposit
             </Link>
-            <Link href="/profile" className="hover:text-green-500" >
+            <Link href="/dash" className="hover:text-green-500" >
               profile 
             </Link>
           </nav>
