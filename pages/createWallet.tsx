@@ -5,19 +5,28 @@ import {
   faPlus,
   faLink,
   faCircleNotch,
+  faEye,
+  faEyeSlash,
+  faExclamationTriangle,
+  faFileDownload,
 } from "@fortawesome/free-solid-svg-icons";
 
 const CreateWallet = () => {
   const [activeTab, setActiveTab] = useState<"link" | "create">("link");
-  const [useThirdParty, setUseThirdParty] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [walletData, setWalletData] = useState<{ address: string; message: string }>({
-    address: "",
-    message: "",
-  });
+  const [walletData, setWalletData] = useState<{
+    address: string;
+    message: string;
+    seedPhrase?: string;
+  }>({ address: "", message: "" });
+  const [error, setError] = useState<string | null>(null);
+  const [showSeedPhrase, setShowSeedPhrase] = useState(false);
 
   const handleCreateWallet = async (type: "custom" | "third-party") => {
     setLoading(true);
+    setError(null);
+    setWalletData({ address: "", message: "" });
+
     try {
       const response = await fetch("/api/createWallet", {
         method: "POST",
@@ -25,26 +34,41 @@ const CreateWallet = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-        userId: 123, // Replace with the actual user ID
-        useThirdParty: false,
-      }),
+          userId: 123, // Replace with the actual user ID
+          useThirdParty: type === "third-party",
+        }),
       });
 
-      if (!response.ok) throw new Error("Error creating wallet");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create wallet.");
+      }
 
       const data = await response.json();
+      if (!data.address || !data.seedPhrase) {
+        throw new Error("Incomplete wallet data received.");
+      }
+
       setWalletData({
-        address: data.address || "",
-        message: data.message || "Wallet created successfully!",
+        address: data.address,
+        message: "Wallet created successfully!",
+        seedPhrase: data.seedPhrase,
       });
     } catch (error) {
-      setWalletData({
-        address: "",
-        message: (error as Error).message || "Failed to create wallet.",
-      });
+      setError((error as Error).message || "Failed to create wallet.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDownloadSeedPhrase = () => {
+    const element = document.createElement("a");
+    const file = new Blob([walletData.seedPhrase || ""], { type: "text/plain" });
+    element.href = URL.createObjectURL(file);
+    element.download = "seed-phrase.txt";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   };
 
   return (
@@ -132,6 +156,51 @@ const CreateWallet = () => {
                   )}
                 </button>
               </div>
+
+              {/* Error Message */}
+              {error && (
+                <div className="mt-6 text-center text-red-500">
+                  <FontAwesomeIcon icon={faExclamationTriangle} className="mr-2" />
+                  {error}
+                </div>
+              )}
+
+              {/* Success Message */}
+              {walletData.address && (
+                <div className="mt-6 text-center text-green-400">
+                  <p className="font-bold">{walletData.message}</p>
+                  <p className="break-all">{walletData.address}</p>
+                </div>
+              )}
+
+              {/* Seed Phrase Display */}
+              {walletData.seedPhrase && (
+                <div className="mt-6 text-center">
+                  <p className="font-bold text-gray-300">Seed Phrase (Encrypted)</p>
+                  <div className="relative">
+                    <p
+                      className={`break-all bg-gray-700 p-4 rounded-lg ${
+                        showSeedPhrase ? "text-gray-300" : "text-gray-500 blur-sm"
+                      }`}
+                    >
+                      {walletData.seedPhrase}
+                    </p>
+                    <button
+                      onClick={() => setShowSeedPhrase(!showSeedPhrase)}
+                      className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-400"
+                    >
+                      <FontAwesomeIcon icon={showSeedPhrase ? faEyeSlash : faEye} />
+                    </button>
+                  </div>
+                  <button
+                    onClick={handleDownloadSeedPhrase}
+                    className="mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-500 transition"
+                  >
+                    <FontAwesomeIcon icon={faFileDownload} className="mr-2" />
+                    Download Seed Phrase
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
