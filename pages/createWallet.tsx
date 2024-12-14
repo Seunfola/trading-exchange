@@ -11,6 +11,7 @@ import {
   faFileDownload,
 } from "@fortawesome/free-solid-svg-icons";
 
+
 const CreateWallet = () => {
   const [activeTab, setActiveTab] = useState<"link" | "create">("link");
   const [loading, setLoading] = useState(false);
@@ -27,14 +28,17 @@ const CreateWallet = () => {
     setError(null);
     setWalletData({ address: "", message: "" });
 
+
     try {
+      // const { userId } = req.query;
+
       const response = await fetch("/api/createWallet", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: 123, // Replace with the actual user ID
+          userId:1, // Replace with the actual user ID
           useThirdParty: type === "third-party",
         }),
       });

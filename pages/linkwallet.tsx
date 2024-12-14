@@ -8,11 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const LinkWallet: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
-  const [currency, setCurrency] = useState("");
-  const [privateKey, setPrivateKey] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -20,27 +16,20 @@ const LinkWallet: React.FC = () => {
     setLoading(true);
     setMessage(null);
     try {
-      const response = await fetch(
-        "https://api.binance.com/api/v3/account/walletLink",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email,
-            password,
-            walletAddress,
-            currency,
-            privateKey,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-            "X-MBX-APIKEY": process.env.NEXT_PUBLIC_BINANCE_API_KEY || "",
-          },
-        }
-      );
+      const response = await fetch("/api/linkWallet", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          address: walletAddress,
+        }),
+      });
 
       const data = await response.json();
+
       if (!response.ok) {
-        throw new Error(data.msg || "Error linking wallet");
+        throw new Error(data.message || "Error linking wallet");
       }
 
       setMessage("Wallet linked successfully");
@@ -61,68 +50,20 @@ const LinkWallet: React.FC = () => {
           />
           <h2 className="text-4xl font-bold mb-4">Link Your Wallet</h2>
           <p className="text-gray-500">
-            Securely link your Binance wallet to our platform
+            Securely link your wallet to our platform
           </p>
         </div>
 
         <div className="mt-6">
-          <label className="block text-sm font-medium text-gray-600 mb-2">
-            Email
-          </label>
-          <input
-            type="email"
-            className="w-full bg-gray-100 text-gray-800 py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-500"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-600 mb-2">
-            Password
-          </label>
-          <input
-            type="password"
-            className="w-full bg-gray-100 text-gray-800 py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-500"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <div className="mt-4">
           <label className="block text-sm font-medium text-gray-600 mb-2">
             Wallet Address
           </label>
           <input
             type="text"
             className="w-full bg-gray-100 text-gray-800 py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-500"
-            placeholder="Enter wallet address"
+            placeholder="Enter your wallet address"
             value={walletAddress}
             onChange={(e) => setWalletAddress(e.target.value)}
-          />
-        </div>
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-600 mb-2">
-            Currency
-          </label>
-          <input
-            type="text"
-            className="w-full bg-gray-100 text-gray-800 py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-500"
-            placeholder="Enter currency (e.g., USD, BTC)"
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
-          />
-        </div>
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-600 mb-2">
-            Private Key (optional)
-          </label>
-          <input
-            type="text"
-            className="w-full bg-gray-100 text-gray-800 py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-500"
-            placeholder="Enter private key (optional)"
-            value={privateKey}
-            onChange={(e) => setPrivateKey(e.target.value)}
           />
         </div>
 
