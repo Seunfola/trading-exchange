@@ -15,14 +15,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Fetch user details from the database
-    const user = await prisma.user.findUnique({
+const user = await prisma.user.findUnique({
       where: { id: parseInt(userId, 10) },
       select: {
         id: true,
         username: true,
         email: true,
         createdAt: true,
-        Wallets: {
+        Wallets: { // Adjust to lowercase `wallets`
           select: {
             address: true,
             balance: true,

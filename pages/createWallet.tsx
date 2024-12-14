@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faWallet,
@@ -15,6 +16,7 @@ import {
 const CreateWallet = () => {
   const [activeTab, setActiveTab] = useState<"link" | "create">("link");
   const [loading, setLoading] = useState(false);
+    const [userId, setUserId] = useState<number | null>(null);
   const [walletData, setWalletData] = useState<{
     address: string;
     message: string;
@@ -23,6 +25,22 @@ const CreateWallet = () => {
   const [error, setError] = useState<string | null>(null);
   const [showSeedPhrase, setShowSeedPhrase] = useState(false);
 
+    const router = useRouter();
+
+      useEffect(() => {
+    const storedUserId = localStorage.getItem("userId"); // Assuming userId is stored in localStorage
+    if (storedUserId) {
+      setUserId(Number(storedUserId));
+    } else {
+      setError("User not authenticated.");
+    }
+  }, []);
+
+      const handleConnectWallet = () => {
+    if (activeTab === "link") {
+      router.push("/linkwallet"); // This routes to the Link Wallet screen
+    }
+  };
   const handleCreateWallet = async (type: "custom" | "third-party") => {
     setLoading(true);
     setError(null);
@@ -38,7 +56,7 @@ const CreateWallet = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId:1, // Replace with the actual user ID
+          userId,// Replace with the actual user ID
           useThirdParty: type === "third-party",
         }),
       });
@@ -58,6 +76,7 @@ const CreateWallet = () => {
         message: "Wallet created successfully!",
         seedPhrase: data.seedPhrase,
       });
+
     } catch (error) {
       setError((error as Error).message || "Failed to create wallet.");
     } finally {
@@ -111,7 +130,8 @@ const CreateWallet = () => {
               <FontAwesomeIcon icon={faLink} className="text-blue-400 text-5xl mb-4" />
               <h2 className="text-2xl font-bold mb-4">Link Your Wallet</h2>
               <p className="text-gray-400 mb-6">Securely connect your wallet to manage transactions.</p>
-              <button className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-500 transition">
+              <button onClick={() => handleConnectWallet()}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-500 transition">
                 Connect Wallet
               </button>
             </div>

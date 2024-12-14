@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faWallet,
@@ -7,14 +7,23 @@ import {
   faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
-const LinkWallet: React.FC = () => {
+const LinkWallet = ({ onWalletLinked }: { onWalletLinked: () => void }) => {
   const [walletAddress, setWalletAddress] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleLinkWallet = async () => {
+const handleLinkWallet = async () => {
     setLoading(true);
     setMessage(null);
+
+    const userId = localStorage.getItem("userId"); 
+
+    if (!userId) {
+      setMessage("User ID is missing.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch("/api/linkWallet", {
         method: "POST",
@@ -22,6 +31,7 @@ const LinkWallet: React.FC = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          userId: parseInt(userId), // Ensure it's a number
           address: walletAddress,
         }),
       });
@@ -32,7 +42,10 @@ const LinkWallet: React.FC = () => {
         throw new Error(data.message || "Error linking wallet");
       }
 
+       onWalletLinked();
+
       setMessage("Wallet linked successfully");
+      
     } catch (error) {
       setMessage((error as Error).message || "Error linking wallet");
     } finally {

@@ -27,7 +27,7 @@ interface User {
   wallets?: Wallet[];
 }
 
-const Profile: React.FC = () => {
+const Profile= () => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -68,6 +68,7 @@ const Profile: React.FC = () => {
 
     fetchUserDetails();
   }, [router]);
+
 
   const handleLogout = () => {
     localStorage.removeItem("token");
