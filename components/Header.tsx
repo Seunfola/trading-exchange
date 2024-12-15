@@ -48,7 +48,7 @@ const Header = () => {
             <Link href="/deposit" className="hover:text-green-500" >
              Deposit
             </Link>
-            <Link href="/dash" className="hover:text-green-500" >
+            <Link href="/profile" className="hover:text-green-500" >
               profile 
             </Link>
           </nav>

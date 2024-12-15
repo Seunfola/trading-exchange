@@ -25,13 +25,23 @@ interface User {
   email: string;
   createdAt: string;
   wallets?: Wallet[];
+  emailNotifications?: boolean;
+  smsNotifications?: boolean;
+  themePreference?: "light" | "dark";
 }
+
 
 const Profile= () => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"account" | "wallet" | "settings">("account");
+      const [emailNotifications, setEmailNotifications] = useState(false);
+    const [smsNotifications, setSmsNotifications] = useState(false);
+    const [themePreference, setThemePreference] = useState<"light" | "dark">("dark");
+    const [saving, setSaving] = useState(false);
+
+
   const [walletVisible, setWalletVisible] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -57,7 +67,11 @@ const Profile= () => {
         }
 
         const data = await response.json();
+
+        console.log("User Data:", data.user);
+
         setUser(data.user);
+
       } catch (error) {
         console.error("Error fetching user details:", error);
         router.push("/login?redirect=profile");
@@ -68,6 +82,34 @@ const Profile= () => {
 
     fetchUserDetails();
   }, [router]);
+
+      useEffect(() => {
+      if (user) {
+        setEmailNotifications(user.emailNotifications || false);
+        setSmsNotifications(user.smsNotifications || false);
+        setThemePreference(user.themePreference || "dark");
+      }
+    }, [user]);
+
+      const handleSaveSettings = async () => {
+    setSaving(true);
+    try {
+      const response = await fetch("/api/save-settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ emailNotifications, smsNotifications, themePreference }),
+      });
+
+      if (!response.ok) throw new Error("Failed to save settings");
+
+      alert("Settings saved successfully!");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to save settings.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
 
   const handleLogout = () => {
@@ -157,55 +199,135 @@ const Profile= () => {
               </p>
             </div>
           )}
-
-          {activeTab === "wallet" && (
-            <div className="bg-gray-800 rounded-lg p-6">
-  <div className="flex justify-between items-center mb-4">
-    <h2 className="text-xl font-semibold text-blue-300">Wallet Information</h2>
-    <button
-      onClick={() => {
-        router.push("/createWallet")
-      }}
-      className="flex items-center bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 transition-transform transform hover:scale-105"
-    >
-      <FontAwesomeIcon icon={faWallet} className="mr-2" />
-      Create Wallet
-    </button>
+{activeTab === "wallet" && (
+  <div className="bg-gray-800 rounded-lg p-6">
+    <div className="flex justify-between items-center mb-4">
+      <h2 className="text-xl font-semibold text-blue-300">Wallet Information</h2>
+      <button
+        onClick={() => router.push("/createWallet")}
+        className="flex items-center bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 transition-transform transform hover:scale-105"
+      >
+        <FontAwesomeIcon icon={faWallet} className="mr-2" />
+        Create Wallet
+      </button>
+    </div>
+    {user?.wallets?.length ? (
+      user.wallets.map((wallet, index) => (
+        <div key={index} className="mt-4">
+          <p className="text-gray-300">
+            <strong>Wallet Address:</strong>{" "}
+            <span className="font-mono">
+              {walletVisible ? wallet.address : "***************"}
+            </span>
+            <button
+              onClick={() => setWalletVisible(!walletVisible)}
+              className="ml-2 text-blue-400 hover:text-blue-600 transition"
+            >
+              <FontAwesomeIcon icon={walletVisible ? faEyeSlash : faEye} />
+            </button>
+          </p>
+          <p className="text-gray-300">
+            <strong>Balance:</strong> {wallet.balance.toFixed(2)} {wallet.currency}
+          </p>
+        </div>
+      ))
+    ) : (
+      <p className="text-gray-400 mt-4">No wallets linked yet.</p>
+    )}
   </div>
-  {user?.wallets && user.wallets.length > 0 ? (
-    user.wallets.map((wallet, index) => (
-      <div key={index} className="mt-4">
-        <p className="text-gray-300">
-          <strong>Wallet Address:</strong>{" "}
-          <span className="font-mono">
-            {walletVisible ? wallet.address : "***************"}
-          </span>
-          <button
-            onClick={() => setWalletVisible(!walletVisible)}
-            className="ml-2 text-blue-400 hover:text-blue-600 transition"
-          >
-            <FontAwesomeIcon icon={walletVisible ? faEyeSlash : faEye} />
-          </button>
-        </p>
-        <p className="text-gray-300">
-          <strong>Balance:</strong> {wallet.balance.toFixed(2)} {wallet.currency}
-        </p>
-      </div>
-    ))
-  ) : (
-    <p className="text-gray-400 mt-4">No wallets linked yet.</p>
-  )}
-</div>
-
           )}
 
           {activeTab === "settings" && (
-            <div className="bg-gray-800 rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-blue-300">Settings</h2>
-              <p className="text-gray-400 mt-4">This section allows you to configure your preferences.</p>
-              {/* Add settings options here */}
-            </div>
-          )}
+  <div className="bg-gray-800 rounded-lg p-6">
+    <h2 className="text-xl font-semibold text-blue-300">Settings</h2>
+    <p className="text-gray-400 mt-4">Manage your preferences below:</p>
+
+    {/* Profile Settings */}
+    <div className="mt-6">
+      <h3 className="text-lg font-medium text-blue-200">Profile Settings</h3>
+      <div className="mt-4 space-y-4">
+        <div>
+          <label className="block text-gray-300">Username</label>
+          <input
+            type="text"
+            value={user?.username || ""}
+            className="w-full bg-gray-700 text-white rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-500"
+            readOnly
+          />
+        </div>
+        <div>
+          <label className="block text-gray-300">Email</label>
+          <input
+            type="email"
+            value={user?.email || ""}
+            className="w-full bg-gray-700 text-white rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-500"
+            readOnly
+          />
+        </div>
+      </div>
+    </div>
+
+    {/* Notification Settings */}
+    <div className="mt-8">
+      <h3 className="text-lg font-medium text-blue-200">Notification Settings</h3>
+      <div className="mt-4 flex items-center">
+        <label className="text-gray-300 mr-4">Email Notifications</label>
+           <input
+            type="checkbox"
+            className="form-checkbox h-5 w-5 text-blue-500"
+            checked={emailNotifications}
+            onChange={(e) => setEmailNotifications(e.target.checked)}
+          />
+      </div>
+      <div className="mt-4 flex items-center">
+        <label className="text-gray-300 mr-4">SMS Notifications</label>
+        <input
+          type="checkbox"
+            className="form-checkbox h-5 w-5 text-blue-500"
+            checked={smsNotifications}
+            onChange={(e) => setSmsNotifications(e.target.checked)}
+        />
+      </div>
+    </div>
+
+    {/* Theme Preferences */}
+     <div className="mt-6">
+        <h3 className="text-lg font-medium text-blue-200">Theme Preferences</h3>
+        <div className="mt-4 flex space-x-4">
+          <button
+            className={`py-2 px-4 ${
+              themePreference === "light" ? "bg-blue-500 text-white" : "bg-gray-700 text-white"
+            } rounded-lg`}
+            onClick={() => setThemePreference("light")}
+          >
+            Light Mode
+          </button>
+          <button
+            className={`py-2 px-4 ${
+              themePreference === "dark" ? "bg-blue-500 text-white" : "bg-gray-700 text-white"
+            } rounded-lg`}
+            onClick={() => setThemePreference("dark")}
+          >
+            Dark Mode
+          </button>
+        </div>
+      </div>
+
+      {/* Save Button */}
+      <div className="text-right mt-6">
+        <button
+          onClick={handleSaveSettings}
+          className={`py-2 px-6 ${
+            saving ? "bg-gray-600 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"
+          } text-white rounded-lg`}
+          disabled={saving}
+        >
+          {saving ? "Saving..." : "Save Changes"}
+        </button>
+      </div>
+    </div>
+)}
+
         </div>
 
         {/* Logout Button */}
