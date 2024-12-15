@@ -12,6 +12,7 @@ import {
   faExclamationTriangle,
   faFileDownload,
 } from "@fortawesome/free-solid-svg-icons";
+import OrderBook from "./OrderBook";
 
 
 const CreateWallet = () => {
@@ -256,6 +257,7 @@ const CreateWallet = () => {
           )}
         </div>
       </div>
+      
     </div>
   );
 };

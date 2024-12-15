@@ -1,4 +1,4 @@
-import OrderForm from '../components/OrderForm';
+import OrderForm from './OrderForm';
 import Login from './login';
 import Signup from './signup';
 import { useAuth } from '../context/AuthContext';
@@ -7,6 +7,7 @@ import Hero from './hero';
 import Feature from './feature';
 import ContactUs from './contactus';
 import TermsOfService from './terms-of-service';
+import OrderTabs from './ordertab';
 
 function Home() {
   // const { isAuthenticated } = useAuth();
@@ -22,6 +23,7 @@ function Home() {
           <div className=" grid grid-cols-1 md:col-span-1">
             <Hero />
             <Feature />
+            <OrderTabs/>
             <TermsOfService />
             <ContactUs />
           </div>
