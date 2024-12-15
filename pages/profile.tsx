@@ -91,25 +91,35 @@ const Profile= () => {
       }
     }, [user]);
 
-      const handleSaveSettings = async () => {
-    setSaving(true);
-    try {
-      const response = await fetch("/api/save-settings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emailNotifications, smsNotifications, themePreference }),
-      });
+const handleSaveSettings = async () => {
+  setSaving(true);
+  try {
+    const response = await fetch("/api/save-settings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "user-id", 
+      },
+      body: JSON.stringify({
+        emailNotifications,
+        smsNotifications,
+        themePreference,
+      }),
+    });
 
-      if (!response.ok) throw new Error("Failed to save settings");
-
-      alert("Settings saved successfully!");
-    } catch (error) {
-      console.error(error);
-      alert("Failed to save settings.");
-    } finally {
-      setSaving(false);
+    if (!response.ok) {
+      throw new Error("Failed to save settings.");
     }
-  };
+
+    const result = await response.json();
+    alert("Settings saved successfully!");
+  } catch (error) {
+    console.error("Error saving settings:", error);
+    alert("Failed to save settings. Please try again.");
+  } finally {
+    setSaving(false);
+  }
+};
 
 
   const handleLogout = () => {

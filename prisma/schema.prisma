@@ -65,14 +65,17 @@ model Wallet {
 }
 
 model User {
-  id        Int         @id @default(sequence())
-  username  String      @unique
-  email     String      @unique
-  password  String
-  createdAt DateTime    @default(now())
-  deposits  Deposit[]
-  OrderBook OrderBook[]
-  Wallets   Wallet[]
+  id                Int         @id @default(sequence())
+  username          String      @unique
+  email             String      @unique
+  password          String
+  createdAt         DateTime    @default(now())
+  deposits          Deposit[]
+  OrderBook         OrderBook[]
+  Wallets           Wallet[]
+  emailNotifications Boolean    @default(false) 
+  smsNotifications  Boolean    @default(false) 
+  themePreference   String      @default("dark") 
 
   @@index([email])
 }
