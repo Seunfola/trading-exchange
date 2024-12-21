@@ -3,25 +3,26 @@ import prisma from "../../lib/prisma";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    // Ensure the method is GET
     if (req.method !== "GET") {
       return res.status(405).json({ message: "Method Not Allowed" });
     }
 
     const { userId } = req.query;
 
+    // Validate `userId` parameter
     if (!userId || typeof userId !== "string" || isNaN(Number(userId))) {
       return res.status(400).json({ message: "Invalid or missing User ID" });
     }
 
-    const user = await prisma.user.findUnique({
+    // Fetch user details from the database
+const user = await prisma.user.findUnique({
       where: { id: parseInt(userId, 10) },
       select: {
         id: true,
         username: true,
         email: true,
         createdAt: true,
-        Wallets: { // Adjusted to uppercase `Wallets` for consistency
+        Wallets: { // Adjust to lowercase `wallets`
           select: {
             address: true,
             balance: true,
@@ -30,17 +31,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       },
     });
-
-    // Handle case where user is not found
+ 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Add Cache-Control headers to prevent caching
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "0");
-
+    
     // Return user data
     return res.status(200).json({ user });
   } catch (error) {
