@@ -274,8 +274,8 @@ const handleSaveSettings = async () => {
       <p className="text-gray-400 mt-4">No wallets linked yet.</p>
     )}
 
-    {/* Show Unlock Remaining Wallets button if there are hidden wallets */}
-    {!isSeedVerified && user?.wallets?.length > 3 && (
+ 
+    {!isSeedVerified && user?.wallets && user.wallets.length > 3 && (
       <button
         onClick={() => setShowSeedPhraseModal(true)}
         className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg"
