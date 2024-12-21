@@ -40,9 +40,13 @@ const Profile= () => {
     const [smsNotifications, setSmsNotifications] = useState(false);
     const [themePreference, setThemePreference] = useState<"light" | "dark">("dark");
     const [saving, setSaving] = useState(false);
+    const [showSeedPhraseModal, setShowSeedPhraseModal] = useState(false);
+      const [isSeedVerified, setIsSeedVerified] = useState(false);
+  const [error, setError] = useState("");
+  const [seedPhrase, setSeedPhrase] = useState("");
 
 
-  const [walletVisible, setWalletVisible] = useState(false);
+  const [walletVisible, setWalletVisible] = useState<boolean[]>([]);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -67,11 +71,12 @@ const Profile= () => {
         }
 
         const data = await response.json();
-
-        console.log("User Data:", data.user);
-
         setUser(data.user);
 
+        const visibility = data.user.wallets.map((_: Wallet, index: number) =>
+          index < 3 ? true : false
+        );
+        setWalletVisible(visibility);
       } catch (error) {
         console.error("Error fetching user details:", error);
         router.push("/login?redirect=profile");
@@ -91,6 +96,19 @@ const Profile= () => {
       }
     }, [user]);
 
+  const handleSeedPhraseSubmit = () => {
+    const correctSeedPhrase = "your-secure-seed-phrase"; // Replace with the actual seed phrase
+    if (seedPhrase === correctSeedPhrase) {
+      setIsSeedVerified(true);
+      setShowSeedPhraseModal(false);
+      setError("");
+
+      // Make all wallets visible
+      setWalletVisible(walletVisible.map(() => true));
+    } else {
+      setError("Invalid seed phrase. Please try again.");
+    }
+  };
 const handleSaveSettings = async () => {
   setSaving(true);
   try {
@@ -218,31 +236,56 @@ const handleSaveSettings = async () => {
         Create Wallet
       </button>
     </div>
+
     {user?.wallets?.length ? (
       user.wallets.map((wallet, index) => (
         <div key={index} className="mt-4">
           <p className="text-gray-300">
             <strong>Wallet Address:</strong>{" "}
             <span className="font-mono">
-              {walletVisible ? wallet.address : "***************"}
+              {/* Show address for the first 3 wallets, hide for others unless seed phrase is verified */}
+              {walletVisible[index] ? wallet.address : index < 3 ? wallet.address : "**********"}
             </span>
             <button
-              onClick={() => setWalletVisible(!walletVisible)}
+              onClick={() => {
+                if (walletVisible[index] || index < 3 || isSeedVerified) {
+                  setWalletVisible((prev) =>
+                    prev.map((visible, i) => (i === index ? !visible : visible))
+                  );
+                } else {
+                  setShowSeedPhraseModal(true);
+                }
+              }}
               className="ml-2 text-blue-400 hover:text-blue-600 transition"
             >
-              <FontAwesomeIcon icon={walletVisible ? faEyeSlash : faEye} />
+              <FontAwesomeIcon icon={walletVisible[index] ? faEyeSlash : faEye} />
             </button>
           </p>
           <p className="text-gray-300">
-            <strong>Balance:</strong> {wallet.balance.toFixed(2)} {wallet.currency}
+            <strong>Balance:</strong>{" "}
+            {/* Show balance for the first 3 wallets, hide for others unless seed phrase is verified */}
+            {walletVisible[index] || index < 3 || isSeedVerified
+              ? `${wallet.balance.toFixed(2)} ${wallet.currency}`
+              : "**********"}
           </p>
         </div>
       ))
     ) : (
       <p className="text-gray-400 mt-4">No wallets linked yet.</p>
     )}
+
+    {/* Show Unlock Remaining Wallets button if there are hidden wallets */}
+    {!isSeedVerified && user?.wallets?.length > 3 && (
+      <button
+        onClick={() => setShowSeedPhraseModal(true)}
+        className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg"
+      >
+        Unlock Remaining Wallets
+      </button>
+    )}
   </div>
-          )}
+)}
+
 
           {activeTab === "settings" && (
   <div className="bg-gray-800 rounded-lg p-6">
