@@ -54,6 +54,7 @@ const Profile= () => {
       const userId = localStorage.getItem("userId");
 
       if (!userId) {
+        console.warn("No userId found in localStorage. Redirecting to login.");
         router.push("/login?redirect=profile");
         return;
       }
