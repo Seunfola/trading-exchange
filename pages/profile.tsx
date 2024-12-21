@@ -186,20 +186,17 @@ const handleSaveSettings = async () => {
           {activeTab === "account" && (
             <div className="bg-gray-800 rounded-lg p-6">
               <h2 className="text-xl font-semibold text-blue-300">Account Details</h2>
-              <p className="text-gray-300 mt-3">
-                <strong className="mr-9">User ID:</strong> {user?.id}{" "}
+              <p className="text-gray-300">
+                <strong className="mr-4">Username:</strong> {user?.username}
                 <button
                   onClick={handleCopyUserId}
-                  className="ml-2 text-white hover:text-blue-600 transition"
+                  className="ml-5 text-white py-1 hover:text-blue-600 transition"
                 >
                   <FontAwesomeIcon icon={copied ? faCheck : faCopy} />
-                  <span className="ml-1">
+                  <span className="ml-2">
                     {copied ? "Copied!" : "Copy"}
                     </span>
                 </button>
-              </p>
-              <p className="text-gray-300">
-                <strong className="mr-4">Username:</strong> {user?.username}
               </p>
               <p className="text-gray-300">
                 <strong className="mr-12">Email:</strong> {user?.email}
